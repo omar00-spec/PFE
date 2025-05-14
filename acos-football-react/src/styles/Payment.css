@@ -1,0 +1,65 @@
+.payment-page {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  padding: 40px 0;
+  background-color: #f8f9fa;
+}
+
+.payment-page .card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.payment-page .card-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.bank-info, .check-info {
+  margin: 20px 0;
+}
+
+.bank-info .iban, .bank-info .reference {
+  font-family: monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.recipient-info, .reference-info, .address-info {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Styles pour l'impression */
+@media print {
+  .payment-page {
+    background-color: white;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .payment-page .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  
+  .actions-buttons {
+    display: none !important;
+  }
+  
+  nav, footer, .site-header, .site-footer {
+    display: none !important;
+  }
+  
+  body {
+    background-color: white;
+  }
+  
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+} 

@@ -1,0 +1,186 @@
+.registration-form-container {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.form-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.form-section-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  color: #343a40;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f7a600;
+}
+
+.form-section {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #f7a600;
+}
+
+.form-section h5 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.category-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.registration-form .form-label {
+  font-weight: 500;
+}
+
+.registration-form .form-control,
+.registration-form .form-select {
+  border-radius: 6px;
+  padding: 0.65rem 1rem;
+  border: 1px solid #ced4da;
+  transition: all 0.3s ease;
+}
+
+.registration-form .form-control:focus,
+.registration-form .form-select:focus {
+  border-color: #f7a600;
+  box-shadow: 0 0 0 0.25rem rgba(247, 166, 0, 0.25);
+}
+
+.document-checkboxes, 
+.payment-methods {
+  margin-left: 0.5rem;
+}
+
+/* Styles pour les téléchargements de documents */
+.document-uploads {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.document-upload-item {
+  position: relative;
+}
+
+.document-upload-item .input-group-text {
+  background-color: #f7a600;
+  color: white;
+  border-color: #f7a600;
+  cursor: pointer;
+}
+
+.document-upload-item .input-group-text:hover {
+  background-color: #e09600;
+}
+
+.file-info {
+  font-size: 0.85rem;
+  color: #495057;
+  background-color: #f0f0f0;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+/* Cache le texte "No file chosen" par défaut */
+.document-upload-item input[type="file"]::file-selector-button {
+  color: #6c757d;
+}
+
+.document-upload-item input[type="file"]::-webkit-file-upload-button {
+  color: #6c757d;
+}
+
+.signature-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border-top: 1px dashed #ced4da;
+  font-style: italic;
+}
+
+.form-actions {
+  margin-top: 2.5rem;
+}
+
+.form-actions .btn-primary {
+  background-color: #f7a600;
+  border-color: #f7a600;
+  border-radius: 50px;
+  padding: 0.75rem 2.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-actions .btn-primary:hover {
+  background-color: #e09600;
+  border-color: #e09600;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.submission-success {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.submission-success h4 {
+  color: #28a745;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.submission-success p {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: #495057;
+}
+
+/* Style pour le bouton de téléchargement PDF */
+.pdf-download .btn {
+  display: inline-flex;
+  align-items: center;
+  border-color: #007bff;
+  color: #007bff;
+  transition: all 0.3s ease;
+}
+
+.pdf-download .btn:hover {
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .registration-form-container {
+    padding: 1.5rem;
+  }
+  
+  .category-checkboxes {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .form-section {
+    padding: 1rem;
+  }
+  
+  .form-actions .btn-primary {
+    width: 100%;
+  }
+} 
