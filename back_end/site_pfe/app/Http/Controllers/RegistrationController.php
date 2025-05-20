@@ -17,6 +17,9 @@ class RegistrationController extends Controller
 
     public function store(Request $request)
     {
+        // Déboguer les données reçues
+        \Log::info('Données reçues du formulaire:', $request->all());
+        
         // Valider les données
         $validator = Validator::make($request->all(), [
             'playerName' => 'required|string|max:255',
@@ -57,16 +60,27 @@ class RegistrationController extends Controller
             }
         }
 
-        // Créer l'inscription
-        $registration = Registration::create([
+        // Préparer les données pour l'inscription
+        $registrationData = [
             'player_id' => $player->id,
             'parent_name' => $request->parentName,
             'parent_email' => $request->parentEmail,
             'parent_phone' => $request->parentPhone,
+            'address' => $request->address,
+            'city' => $request->city,
+            'postal_code' => $request->postalCode,
+            'player_phone' => $request->playerPhone,
+            'player_email' => $request->playerEmail,
             'documents' => $documents,
             'payment_method' => $request->paymentMethod,
-            'status' => 'pending',
-        ]);
+            'payment_status' => 'pending',
+        ];
+        
+        // Déboguer les données avant création
+        \Log::info('Données d\'inscription avant création:', $registrationData);
+        
+        // Créer l'inscription
+        $registration = Registration::create($registrationData);
 
         // Préparer la réponse en fonction du mode de paiement
         $response = [

@@ -14,7 +14,9 @@ use App\Http\Controllers\{
     NewsController,
     MatchController,
     ContactController,
-    UserController
+    UserController,
+    PlayerAuthController,
+    PasswordResetController
 };
 
 // Exemple de route de test
@@ -37,6 +39,7 @@ Route::apiResource('contacts', ContactController::class);
 
 
 
+// Routes d'authentification générale
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
@@ -44,6 +47,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
     Route::post('/logout', [UserController::class, 'logout']);
 });
+
+// Routes d'authentification pour les joueurs
+Route::post('/player/check-and-register', [PlayerAuthController::class, 'checkPlayerAndRegister']);
+Route::post('/player/login', [PlayerAuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/player/profile', [PlayerAuthController::class, 'profile']);
+    Route::post('/player/logout', [PlayerAuthController::class, 'logout']);
+});
+
+// Routes pour la ru00e9initialisation du mot de passe
+Route::post('/password/email', [PasswordResetController::class, 'sendResetLinkEmail']);
+Route::post('/password/reset', [PasswordResetController::class, 'reset']);
 
 Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('/admin-only', function () {

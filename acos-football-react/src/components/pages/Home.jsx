@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faTrophy, faChalkboardTeacher, faChild, faFutbol,
   faCalendarAlt, faUserFriends, faMapMarkedAlt, faCheckCircle,
-  faChevronLeft, faChevronRight
+  faChevronLeft, faChevronRight, faNewspaper
 } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/Home.css';
+import '../../styles/News.css'; // Importer les styles de News pour la vue détaillée
 
 // Import services for dynamic data
 import { getUpcomingMatches } from '../../services/matchService';
@@ -21,6 +22,9 @@ function Home() {
   const [latestNews, setLatestNews] = useState([]);
   // Loading state
   const [isLoading, setIsLoading] = useState(true);
+  // État pour la vue détaillée d'une actualité
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [showDetailView, setShowDetailView] = useState(false);
 
   // Images du carrousel
   const carouselImages = [
@@ -157,8 +161,74 @@ function Home() {
     zIndex: 20
   };
 
+  // Fonction pour fermer la vue détaillée
+  const closeDetailView = () => {
+    setShowDetailView(false);
+    setSelectedPost(null);
+  };
+
+  // Composant pour la vue détaillée d'une actualité
+  const NewsDetailView = ({ post, onClose }) => {
+    if (!post) return null;
+    
+    // Fermer la vue détaillée quand on clique sur l'overlay (en dehors du contenu)
+    const handleOverlayClick = (e) => {
+      if (e.target.className === 'news-detail-overlay') {
+        onClose();
+      }
+    };
+    
+    // Empêcher le défilement du corps de la page quand la vue détaillée est ouverte
+    useEffect(() => {
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        document.body.style.overflow = 'auto';
+      };
+    }, []);
+    
+    return (
+      <div className="news-detail-overlay" onClick={handleOverlayClick}>
+        <div className="news-detail-container">
+          <button className="news-detail-close" onClick={onClose} aria-label="Fermer">
+            <span>&times;</span>
+          </button>
+          
+          <div className="news-detail-content">
+            <div className="news-detail-header">
+              <div className="news-detail-image-container">
+                <img src={post.image} alt={post.title} className="news-detail-image" />
+              </div>
+              <div className="news-detail-meta">
+                <span className="news-detail-category">{post.category}</span>
+                <span className="news-detail-date">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
+                  {post.date}
+                </span>
+              </div>
+              <h1 className="news-detail-title">{post.title}</h1>
+            </div>
+            
+            <div className="news-detail-body">
+              <div className="news-detail-text">
+                {post.content.split('\n').map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
+      {/* Vue détaillée d'une actualité */}
+      {showDetailView && selectedPost && (
+        <NewsDetailView post={selectedPost} onClose={closeDetailView} />
+      )}
+      
       {/* Hero Section - Carousel personnalisé avec défilement automatique */}
       <div className="hero-carousel" style={{ position: 'relative', height: '100vh' }}>
         {/* Images du carousel */}
@@ -496,9 +566,22 @@ function Home() {
                     <div className="news-card-body">
                       <h3>{news.title}</h3>
                       <p>{news.content.substring(0, 80)}...</p>
-                      <Link to={`/actualite/${news.id}`} className="btn btn-outline-primary btn-sm">
+                      <button 
+                        onClick={() => {
+                          setSelectedPost({
+                            id: news.id,
+                            title: news.title,
+                            date: formatDate(news.date),
+                            content: news.content,
+                            image: news.image || '/images/news-default.jpg',
+                            category: 'News'
+                          });
+                          setShowDetailView(true);
+                        }} 
+                        className="btn btn-outline-primary btn-sm"
+                      >
                         Lire la suite
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </div>

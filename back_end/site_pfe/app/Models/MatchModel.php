@@ -9,7 +9,7 @@ class MatchModel extends Model
 {
     protected $table = 'matches_models';
 
-    protected $fillable = ['category_id', 'date', 'opponent', 'location', 'result'];
+    protected $fillable = ['category_id', 'date', 'time', 'opponent', 'location', 'result'];
 
     public function category()
     {

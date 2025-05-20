@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import '../../styles/navbar.css'; // On va créer ce fichier de styles
+import { Link, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../../contexts/AuthContext';
+import '../../styles/navbar.css';
 
 function Navbar() {
+  const navigate = useNavigate();
+  const { currentUser, logout, isAuthenticated } = useAuth();
+  
   // État pour gérer l'ouverture du menu déroulant
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const userMenuRef = useRef(null);
   
   // Fonction pour basculer l'état du menu déroulant
   const toggleDropdown = (e) => {
@@ -25,11 +33,26 @@ function Navbar() {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  // Fermer le dropdown quand on clique ailleurs
+  // Fonction pour basculer le menu utilisateur
+  const toggleUserMenu = () => {
+    setUserMenuOpen(!userMenuOpen);
+  };
+  
+  // Gérer la déconnexion
+  const handleLogout = async () => {
+    await logout();
+    setUserMenuOpen(false);
+    navigate('/');
+  };
+  
+  // Fermer les dropdowns quand on clique ailleurs
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setUserMenuOpen(false);
       }
     }
     
@@ -37,7 +60,7 @@ function Navbar() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [dropdownRef]);
+  }, [dropdownRef, userMenuRef]);
   
   // Détecter le défilement pour changer l'apparence de la navbar
   useEffect(() => {
@@ -139,11 +162,45 @@ function Navbar() {
                 <span className="nav-link-text">Contact</span>
               </Link>
             </li>
-            <li className="nav-item ms-lg-3">
-              <a className="btn btn-primary nav-btn" href="#espace-membre">
-                <span>Espace Membre</span>
-              </a>
-            </li>
+            {isAuthenticated ? (
+              <li className="nav-item ms-lg-3" ref={userMenuRef}>
+                <div className="user-menu-container">
+                  <button 
+                    className="btn btn-primary nav-btn" 
+                    onClick={toggleUserMenu}
+                  >
+                    <FontAwesomeIcon icon={faUser} className="me-2" />
+                    <span>{currentUser?.name?.split(' ')[0] || 'Mon compte'}</span>
+                  </button>
+                  
+                  {userMenuOpen && (
+                    <div className="user-dropdown-menu">
+                      <Link 
+                        to="/espace-membre" 
+                        className="user-dropdown-item"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <FontAwesomeIcon icon={faUser} className="me-2" />
+                        Mon espace
+                      </Link>
+                      <button 
+                        className="user-dropdown-item logout-btn" 
+                        onClick={handleLogout}
+                      >
+                        <FontAwesomeIcon icon={faSignOutAlt} className="me-2" />
+                        Déconnexion
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </li>
+            ) : (
+              <li className="nav-item ms-lg-3">
+                <Link className="btn btn-primary nav-btn" to="/login">
+                  <span>Espace Membre</span>
+                </Link>
+              </li>
+            )}
             <li className="nav-item">
               <div id="language-toggle" className="language-toggle">
                 <span className="flag flag-fr"></span>

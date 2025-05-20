@@ -20,6 +20,10 @@ const News = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // État pour la vue détaillée d'une actualité
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [showDetailView, setShowDetailView] = useState(false);
 
   // Fonction pour formater la date
   const formatDate = (dateString) => {
@@ -65,33 +69,70 @@ const News = () => {
           };
         }));
         
-        // Récupérer les matchs à venir
-        const upcomingMatchesData = await getUpcomingMatches(4);
-        console.log("Matchs à venir récupérés:", upcomingMatchesData);
+        // Récupérer les matchs à venir (sans limite)
+        const upcomingMatchesData = await getUpcomingMatches(100); // Augmenter la limite pour récupérer tous les matchs
+        console.log("Matchs à venir récupérés (BRUT):", upcomingMatchesData);
+        // Afficher les heures des matchs pour débogage
+        upcomingMatchesData.forEach(match => {
+          console.log(`Match ID ${match.id} - Date: ${match.date} - Heure: ${match.time || 'Non définie'}`);
+        });
         setUpcomingMatches(upcomingMatchesData.map(match => ({
           id: match.id,
-          homeTeam: "ACOS " + match.category?.name || "ACOS",
-          awayTeam: match.opponent,
+          homeTeam: "ACOS " + (match.category?.name || ""),
+          awayTeam: match.opponent || "Équipe adverse",
           date: formatDate(match.date),
+          // Utiliser directement l'heure du match depuis la base de données
           time: match.time || '15h00',
-          location: match.location
+          location: match.location || "Lieu à confirmer"
         })));
         
-        // Récupérer les résultats de matchs
-        const pastMatchesData = await getPastMatches(4);
+        // Récupérer les résultats de matchs (sans limite)
+        const pastMatchesData = await getPastMatches(100); // Augmenter la limite pour récupérer tous les résultats
         console.log("Résultats récupérés:", pastMatchesData);
         setResults(pastMatchesData.map(match => {
-          const resultParts = match.result ? match.result.split(' ') : [];
-          const scores = resultParts.length > 1 ? resultParts[1].split('-') : ['0', '0'];
+          // Gérer différents formats de résultats possibles
+          let homeScore = 0;
+          let awayScore = 0;
+          let resultText = 'Terminé';
+          
+          if (match.result) {
+            // Essayer de parser le format standard "Victoire 3-1" ou "Défaite 1-2"
+            const resultParts = match.result.split(' ');
+            if (resultParts.length > 1) {
+              resultText = resultParts[0]; // "Victoire", "Défaite", "Nul"
+              
+              // Essayer de parser le score
+              const scorePart = resultParts[1];
+              if (scorePart && scorePart.includes('-')) {
+                const scores = scorePart.split('-');
+                homeScore = parseInt(scores[0]) || 0;
+                awayScore = parseInt(scores[1]) || 0;
+              }
+            } else if (match.result.includes('-')) {
+              // Format alternatif: juste le score "3-1"
+              const scores = match.result.split('-');
+              homeScore = parseInt(scores[0]) || 0;
+              awayScore = parseInt(scores[1]) || 0;
+              
+              // Déterminer le résultat en fonction du score
+              if (homeScore > awayScore) {
+                resultText = 'Victoire';
+              } else if (homeScore < awayScore) {
+                resultText = 'Défaite';
+              } else {
+                resultText = 'Nul';
+              }
+            }
+          }
           
           return {
             id: match.id,
-            homeTeam: "ACOS " + match.category?.name || "ACOS",
-            awayTeam: match.opponent,
-            homeScore: parseInt(scores[0]) || 0,
-            awayScore: parseInt(scores[1]) || 0,
+            homeTeam: "ACOS " + (match.category?.name || ""),
+            awayTeam: match.opponent || "Équipe adverse",
+            homeScore: homeScore,
+            awayScore: awayScore,
             date: formatDate(match.date),
-            result: match.result
+            result: match.result || `${resultText} ${homeScore}-${awayScore}`
           };
         }));
         
@@ -145,7 +186,15 @@ const News = () => {
                       </div>
                       <h3 className="blog-title">{post.title}</h3>
                       <p className="blog-excerpt">{post.excerpt}</p>
-                      <a href="#" className="blog-read-more">Lire la suite</a>
+                      <button 
+                        onClick={() => {
+                          setSelectedPost(post);
+                          setShowDetailView(true);
+                        }} 
+                        className="blog-read-more"
+                      >
+                        Lire la suite
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -218,7 +267,7 @@ const News = () => {
                         <div className="match-info">
                           <div className="match-time">
                             <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
-                            {match.time}
+                            {match.time} {/* Afficher l'heure du match */}
                           </div>
                           <div className="match-location">
                             <i className="fas fa-map-marker-alt me-2"></i>
@@ -276,8 +325,74 @@ const News = () => {
     }
   };
 
+  // Fonction pour fermer la vue détaillée
+  const closeDetailView = () => {
+    setShowDetailView(false);
+    setSelectedPost(null);
+  };
+
+  // Composant pour la vue détaillée d'une actualité
+  const NewsDetailView = ({ post, onClose }) => {
+    if (!post) return null;
+    
+    // Fermer la vue détaillée quand on clique sur l'overlay (en dehors du contenu)
+    const handleOverlayClick = (e) => {
+      if (e.target.className === 'news-detail-overlay') {
+        onClose();
+      }
+    };
+    
+    // Empêcher le défilement du corps de la page quand la vue détaillée est ouverte
+    useEffect(() => {
+      document.body.style.overflow = 'hidden';
+      
+      return () => {
+        document.body.style.overflow = 'auto';
+      };
+    }, []);
+    
+    return (
+      <div className="news-detail-overlay" onClick={handleOverlayClick}>
+        <div className="news-detail-container">
+          <button className="news-detail-close" onClick={onClose} aria-label="Fermer">
+            <span>&times;</span>
+          </button>
+          
+          <div className="news-detail-content">
+            <div className="news-detail-header">
+              <div className="news-detail-image-container">
+                <img src={post.image} alt={post.title} className="news-detail-image" />
+              </div>
+              <div className="news-detail-meta">
+                <span className="news-detail-category">{post.category}</span>
+                <span className="news-detail-date">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
+                  {post.date}
+                </span>
+              </div>
+              <h1 className="news-detail-title">{post.title}</h1>
+            </div>
+            
+            <div className="news-detail-body">
+              <div className="news-detail-text">
+                {post.content.split('\n').map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
+      {/* Vue détaillée d'une actualité */}
+      {showDetailView && selectedPost && (
+        <NewsDetailView post={selectedPost} onClose={closeDetailView} />
+      )}
+      
       {/* Hero Section */}
       <div className="news-hero">
         <div className="container">

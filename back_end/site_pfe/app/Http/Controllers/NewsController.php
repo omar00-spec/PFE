@@ -11,21 +11,58 @@ class NewsController extends Controller
     {
         // Si le type est spécifié, filtrer par type
         if ($request->has('type')) {
-            return News::where('type', $request->type)->get();
+            $news = News::where('type', $request->type)->get();
+        } else {
+            // Sinon, retourner toutes les actualités/événements
+            $news = News::all();
         }
-
-        // Sinon, retourner toutes les actualités/événements
-        return News::all();
+        
+        // Ajouter l'URL complète pour les images
+        foreach ($news as $item) {
+            if ($item->image) {
+                // Vu00e9rifier si le chemin de l'image contient du00e9ju00e0 'news/'
+            if (strpos($item->image, 'news/') === 0) {
+                $item->image = asset('storage/' . $item->image);
+            } else {
+                $item->image = asset('storage/news/' . $item->image);
+            }
+            }
+        }
+        
+        return $news;
     }
 
     public function getEvents()
     {
-        return News::where('type', 'event')->get();
+        $events = News::where('type', 'event')->get();
+        
+        // Ajouter l'URL complète pour les images
+        foreach ($events as $event) {
+            if ($event->image) {
+                $event->image = asset('storage/' . $event->image);
+            }
+        }
+        
+        return $events;
     }
 
     public function getNews()
     {
-        return News::where('type', 'news')->get();
+        $news = News::where('type', 'news')->get();
+        
+        // Ajouter l'URL complète pour les images
+        foreach ($news as $item) {
+            if ($item->image) {
+                // Vu00e9rifier si le chemin de l'image contient du00e9ju00e0 'news/'
+            if (strpos($item->image, 'news/') === 0) {
+                $item->image = asset('storage/' . $item->image);
+            } else {
+                $item->image = asset('storage/news/' . $item->image);
+            }
+            }
+        }
+        
+        return $news;
     }
 
     public function store(Request $request)
@@ -35,6 +72,11 @@ class NewsController extends Controller
 
     public function show(News $news)
     {
+        // Ajouter l'URL complète pour l'image
+        if ($news->image) {
+            $news->image = asset('storage/' . $news->image);
+        }
+        
         return $news;
     }
 

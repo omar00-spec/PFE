@@ -26,11 +26,17 @@ export const getUpcomingMatches = async (limit = 5) => {
   try {
     const res = await api.get(`/api/matches`);
     
+    // Afficher les données brutes reçues de l'API pour vérifier si l'heure est présente
+    console.log('Données brutes des matchs reçues de l\'API:', res.data);
+    
     // Les matchs à venir sont ceux sans résultat
     const upcomingMatches = res.data
       .filter(match => !match.result)
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .slice(0, limit);
+    
+    // Vérifier si l'heure est présente dans les matchs à venir
+    console.log('Matchs à venir avec leurs heures:', upcomingMatches.map(m => ({id: m.id, date: m.date, time: m.time})));
     
     return upcomingMatches;
   } catch (error) {

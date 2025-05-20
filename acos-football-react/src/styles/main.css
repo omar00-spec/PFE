@@ -4,6 +4,19 @@
 /* Styles supplémentaires spécifiques à React */
 /* Ajoutez ici des styles spécifiques à l'application React si nécessaire */
 
+/* Réinitialisation des curseurs personnalisés */
+* {
+  cursor: auto !important;
+}
+
+a, button, .btn, [role="button"], input[type="submit"], input[type="button"], input[type="reset"], select, option {
+  cursor: pointer !important;
+}
+
+input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="number"], input[type="search"], input[type="url"], textarea {
+  cursor: text !important;
+}
+
 /* Comportement de défilement fluide */
 html {
   scroll-behavior: smooth;
