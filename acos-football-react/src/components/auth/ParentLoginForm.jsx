@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faEnvelope, faLock, faSpinner, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faEnvelope, faPhone, faLock, faSpinner, faExclamationTriangle, faChild } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import '../../styles/auth.css';
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
-const PlayerLoginForm = () => {
+const ParentLoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('login');
   
   // État pour le formulaire de connexion
   const [loginForm, setLoginForm] = useState({
-    email: '',
+    email: location.state?.email || '',
     password: '',
   });
   
   // État pour le formulaire d'inscription
   const [registerForm, setRegisterForm] = useState({
-    firstname: '',
-    lastname: '',
+    name: '',
     email: '',
+    phone: '',
+    player_id: '',
   });
   
   // État pour les messages de statut
@@ -54,14 +56,15 @@ const PlayerLoginForm = () => {
     setStatus({ ...status, loading: true, error: '', success: '' });
     
     try {
-      const response = await axios.post(`${apiUrl}/player/login`, loginForm);
+      const response = await axios.post(`${apiUrl}/parent/login`, loginForm);
       
       if (response.data.success) {
         // Stocker le token et les infos utilisateur
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        localStorage.setItem('player', JSON.stringify(response.data.player));
-        localStorage.setItem('userType', 'player');
+        localStorage.setItem('players', JSON.stringify(response.data.players));
+        localStorage.setItem('registrations', JSON.stringify(response.data.registrations));
+        localStorage.setItem('userType', 'parent');
         
         setStatus({
           ...status,
@@ -69,9 +72,9 @@ const PlayerLoginForm = () => {
           success: 'Connexion réussie! Redirection...'
         });
         
-        // Rediriger vers l'espace membre
+        // Rediriger vers l'espace parent
         setTimeout(() => {
-          navigate('/player-dashboard');
+          navigate('/parent-dashboard');
         }, 1500);
       }
     } catch (error) {
@@ -89,7 +92,7 @@ const PlayerLoginForm = () => {
     setStatus({ ...status, loading: true, error: '', success: '' });
     
     try {
-      const response = await axios.post(`${apiUrl}/player/check-and-register`, registerForm);
+      const response = await axios.post(`${apiUrl}/parent/register`, registerForm);
       
       if (response.data.success) {
         setStatus({
@@ -112,7 +115,7 @@ const PlayerLoginForm = () => {
       setStatus({
         ...status,
         loading: false,
-        error: error.response?.data?.message || 'Erreur lors de la vérification du joueur'
+        error: error.response?.data?.message || 'Erreur lors de l\'enregistrement du parent'
       });
     }
   };
@@ -137,8 +140,8 @@ const PlayerLoginForm = () => {
         
         {activeTab === 'login' ? (
           <div className="auth-form-container">
-            <h3>Connexion Joueur</h3>
-            <p className="auth-subtitle">Accédez à votre espace membre</p>
+            <h3>Connexion Parent</h3>
+            <p className="auth-subtitle">Accédez à l'espace parent pour suivre vos enfants</p>
             
             {status.error && (
               <div className="alert alert-danger">
@@ -217,7 +220,7 @@ const PlayerLoginForm = () => {
         ) : (
           <div className="auth-form-container">
             <h3>Première connexion</h3>
-            <p className="auth-subtitle">Créez votre compte joueur</p>
+            <p className="auth-subtitle">Créez votre compte parent</p>
             
             {status.error && (
               <div className="alert alert-danger">
@@ -252,26 +255,9 @@ const PlayerLoginForm = () => {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Prénom"
-                    name="firstname"
-                    value={registerForm.firstname}
-                    onChange={handleRegisterChange}
-                    required
-                  />
-                </div>
-              </div>
-              
-              <div className="form-group">
-                <div className="input-group">
-                  <span className="input-group-text">
-                    <FontAwesomeIcon icon={faUser} />
-                  </span>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Nom"
-                    name="lastname"
-                    value={registerForm.lastname}
+                    placeholder="Nom complet"
+                    name="name"
+                    value={registerForm.name}
                     onChange={handleRegisterChange}
                     required
                   />
@@ -295,11 +281,37 @@ const PlayerLoginForm = () => {
                 </div>
               </div>
               
-              <div className="form-info alert alert-info">
-                <p className="mb-0 small">
-                  <strong>Note:</strong> Vous devez être déjà inscrit à l'académie pour créer un compte. 
-                  Votre prénom et nom doivent correspondre exactement à ceux utilisés lors de votre inscription.
-                </p>
+              <div className="form-group">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <FontAwesomeIcon icon={faPhone} />
+                  </span>
+                  <input
+                    type="tel"
+                    className="form-control"
+                    placeholder="Téléphone"
+                    name="phone"
+                    value={registerForm.phone}
+                    onChange={handleRegisterChange}
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <FontAwesomeIcon icon={faChild} />
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="ID de votre enfant (optionnel)"
+                    name="player_id"
+                    value={registerForm.player_id}
+                    onChange={handleRegisterChange}
+                  />
+                </div>
               </div>
               
               <button 
@@ -310,14 +322,14 @@ const PlayerLoginForm = () => {
                 {status.loading ? (
                   <>
                     <FontAwesomeIcon icon={faSpinner} spin className="me-2" />
-                    Vérification en cours...
+                    Création en cours...
                   </>
                 ) : 'Créer mon compte'}
               </button>
             </form>
             
             <p className="mt-3 text-center">
-              <a href="#" onClick={() => setActiveTab('login')}>
+              <a href="#" onClick={(e) => { e.preventDefault(); setActiveTab('login'); }}>
                 Déjà un compte ? Connectez-vous
               </a>
             </p>
@@ -328,4 +340,4 @@ const PlayerLoginForm = () => {
   );
 };
 
-export default PlayerLoginForm;
+export default ParentLoginForm; 

@@ -2,9 +2,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   padding: 2rem;
   background-color: #f8f9fa;
+  margin-top: 80px;
 }
 
 .auth-box {
@@ -34,8 +35,8 @@
 }
 
 .auth-tab.active {
-  color: #007bff;
-  border-bottom: 3px solid #007bff;
+  color: #0cc1e0;
+  border-bottom: 3px solid #0cc1e0;
 }
 
 .auth-form-container {
@@ -94,3 +95,331 @@
   text-align: center;
   margin: 0.5rem 0;
 }
+
+.login-page {
+  padding-top: 100px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f9fa;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.login-header h2 {
+  color: #343a40;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Style pour les boutons */
+.btn-primary {
+  background-color: #0cc1e0;
+  border-color: #0cc1e0;
+  color: #000;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0cc1e0;
+  border-color: #0cc1e0;
+  color: #000;
+  transform: translateY(-2px);
+}
+
+/* Styles pour les liens */
+a {
+  color: #0cc1e0;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: #0cc1e0;
+  text-decoration: none;
+}
+
+/* Page de connexion */
+.login-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.login-container {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-header h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.login-header p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.user-type-selector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+}
+
+.user-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  border: none;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: 150px;
+}
+
+.user-type-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.user-type-btn.active {
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
+  color: white;
+}
+
+.user-type-btn.active.player {
+  background: linear-gradient(135deg, #1a2a6c 0%, #2a3a7c 100%);
+}
+
+.user-type-btn.active.coach {
+  background: linear-gradient(135deg, #1a2a6c 0%, #2a3a7c 100%);
+}
+
+.user-type-btn.active.parent {
+  background: linear-gradient(135deg, #134e5e 0%, #1a6c7a 100%);
+}
+
+.user-type-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.user-type-btn.active .user-type-icon {
+  color: #0cc1e0;
+}
+
+.user-type-btn span {
+  font-weight: 600;
+}
+
+.login-form-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Formulaire d'authentification */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 500px;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 1rem;
+  text-align: center;
+  background: none;
+  border: none;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auth-tab.active {
+  color: #000;
+  border-bottom: 3px solid #0cc1e0;
+}
+
+.auth-form-container {
+  padding: 2rem;
+}
+
+.auth-form-container h3 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.auth-subtitle {
+  text-align: center;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+}
+
+.input-group-text {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem 0 0 0.25rem;
+  border-right: none;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0 0.25rem 0.25rem 0;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #0cc1e0;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(12, 193, 224, 0.25);
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #000;
+  border-color: #000;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #333;
+  border-color: #333;
+}
+
+.alert {
+  position: relative;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.generated-password {
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.password-box {
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  font-family: monospace;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .user-type-selector {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .user-type-btn {
+    width: 100%;
+    max-width: 300px;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 1rem;
+  }
+  
+  .user-type-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
+  
+  .auth-box {
+    max-width: 100%;
+    border-radius: 0;
+  }
+  
+  .auth-form-container {
+    padding: 1.5rem;
+  }
+}
+

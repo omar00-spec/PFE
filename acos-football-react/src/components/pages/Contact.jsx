@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone, faEnvelope, faMapMarkerAlt, faClock } from '@fortawesome/free-solid-svg-icons';
 import { faFacebookF, faInstagram } from '@fortawesome/free-brands-svg-icons';
@@ -6,12 +6,28 @@ import ContactForm from '../common/ContactForm';
 import SectionTitle from '../core/SectionTitle';
 import Section from '../core/Section';
 import '../../styles/Contact.css';
+import { preventUnwantedRedirects } from '../../utils/navigationFix';
 
 const Contact = () => {
+  // Effet pour empêcher les redirections non désirées
+  useEffect(() => {
+    // Appliquer les protections contre les redirections
+    const cleanup = preventUnwantedRedirects();
+    
+    return () => {
+      // Nettoyer les écouteurs d'événements lors du démontage
+      if (cleanup) cleanup();
+    };
+  }, []);
+
   return (
     <>
       {/* Hero Section */}
-      <div className="contact-hero">
+      <div className="contact-hero" style={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/IMG-20250601-WA0015.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-10 mx-auto text-center">
@@ -104,7 +120,7 @@ const Contact = () => {
                 allowFullScreen="" 
                 loading="lazy" 
                 referrerPolicy="no-referrer-when-downgrade"
-                title="ACOS Football Academy Location"
+                title="ITTIHAD EL OULFA FOOTBALL CLUB Location"
               ></iframe>
             </div>
           </div>

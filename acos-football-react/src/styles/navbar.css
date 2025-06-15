@@ -4,6 +4,7 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   padding: 10px 0;
   transition: all 0.3s ease;
+  z-index: 1030;
 }
 
 /* Style de la navbar noire */
@@ -32,8 +33,8 @@
 /* Liens de navigation */
 .nav-link {
   font-weight: 700;
-  color: #FFD700 !important;
-  padding: 0.5rem 1rem !important;
+  color: #007BFF !important;
+  padding: 0.5rem 0.2rem !important;
   position: relative;
   overflow: hidden;
 }
@@ -87,50 +88,160 @@
   display: none;
   position: absolute;
   background-color: #000000 !important;
-  border-radius: 8px;
+  border-radius: 0;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-  padding: 1rem;
+  padding: 0;
   min-width: 14rem;
-  margin-top: 0.5rem;
-  z-index: 1000;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  margin-top: 15px !important;
+  z-index: 1010;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
   transform: translateY(10px);
   opacity: 0;
-  border: 1px solid rgba(255, 215, 0, 0.1);
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
+  border: none;
+  top: 100%;
+  left: 0;
+  right: auto;
+  transform: none;
+  will-change: opacity, visibility;
 }
 
 /* Menu déroulant ouvert */
 .dropdown.show .custom-dropdown-menu {
-  display: block;
-  transform: translateX(-50%) translateY(0);
+  display: flex;
+  transform: none;
   opacity: 1;
 }
 
-/* Styles pour le menu utilisateur */
-.user-menu-container {
+/* Style du menu des catégories */
+.custom-dropdown-menu.categories-menu {
+  flex-direction: row;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #000000;
+  border-radius: 4px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1010;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  width: 300px !important;
+  pointer-events: none;
+}
+
+.dropdown.show .custom-dropdown-menu.categories-menu {
+  display: flex !important;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.categories-menu {
+  width: auto;
+  min-width: 500px !important;
+  max-width: 90vw;
+  padding: 20px;
+  left: 50%;
+  transform: translateX(-50%) !important;
+  overflow: visible !important;
+}
+
+.dropdown-grid {
+  display: flex;
+  width: 100%;
+}
+
+.dropdown-column {
+  padding: 0;
+}
+
+.jeunes-sections {
+  width: 150px;
+  background-color: #000;
+  padding: 15px 0;
+}
+
+.jeunes-sections .dropdown-item,
+.developpement .dropdown-item,
+.elite .dropdown-item {
+  color: #007BFF !important;
+  padding: 10px 15px;
+  font-size: 1.1rem;
+  white-space: nowrap;
+}
+
+.developpement, .elite {
+  width: 150px;
+  background-color: #000;
+  padding: 15px 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-header {
+  display: none;
+}
+
+.dropdown-divider {
+  display: none;
+}
+
+/* Styles pour le menu utilisateur et membre */
+.user-menu-container,
+.member-menu-container {
   position: relative;
 }
 
-.user-dropdown-menu {
+.user-dropdown-menu,
+.member-dropdown-menu {
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: #fff;
+  background-color: #000000;
   border-radius: 8px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   width: 200px;
-  z-index: 1000;
+  z-index: 1050;
   margin-top: 10px;
   overflow: hidden;
+  border: 1px solid #333;
 }
 
-.user-dropdown-item {
+.desktop-nav-buttons .user-dropdown-menu,
+.desktop-nav-buttons .member-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #000000;
+  border: 1px solid #333;
+  display: block;
+  z-index: 1060;
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Assurer que les liens dans les menus déroulants sont cliquables */
+.desktop-nav-buttons .member-dropdown-item,
+.desktop-nav-buttons .user-dropdown-item {
+  position: relative;
+  z-index: 1070;
+}
+
+/* Styles pour les menus déroulants en mode mobile */
+.mobile-top-section .member-dropdown-menu,
+.mobile-top-section .user-dropdown-menu {
+  position: static;
+  width: 90%;
+  margin: 5px auto 15px;
+  background-color: #111;
+  border: 1px solid #333;
+}
+
+.user-dropdown-item,
+.member-dropdown-item {
   display: flex;
   align-items: center;
   padding: 12px 16px;
-  color: #343a40;
+  color: #007BFF;
   text-decoration: none;
   transition: background-color 0.3s ease;
   border: none;
@@ -140,9 +251,10 @@
   cursor: pointer;
 }
 
-.user-dropdown-item:hover {
-  background-color: #f8f9fa;
-  color: #007bff;
+.user-dropdown-item:hover,
+.member-dropdown-item:hover {
+  background-color: #222;
+  color: #FFFFFF;
 }
 
 .user-dropdown-item.logout-btn {
@@ -154,51 +266,42 @@
   background-color: #fff8f8;
 }
 
-/* Grille pour le menu déroulant */
-.dropdown-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  min-width: 600px;
-}
-
-.dropdown-column {
-  padding: 0;
-}
-
-.dropdown-header {
-  color: #FFD700;
-  font-weight: 700;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  padding: 0 0 8px 0;
-  margin-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
 /* Éléments du menu déroulant */
 .dropdown-item {
   padding: 0.5rem 1rem;
   color: #ffffff !important;
   font-weight: 500;
-  border-radius: 4px;
+  border-radius: 0;
   transition: all 0.2s ease;
-  margin-bottom: 4px;
+  margin-bottom: 0;
+  cursor: pointer;
 }
 
 .dropdown-item:hover {
   background-color: #333333 !important;
-  color: #FFD700 !important;
+  color: #007BFF !important;
   transform: translateX(5px);
 }
 
 /* Bouton Espace Membre */
 .nav-btn {
-  padding: 0.5rem 1.5rem;
-  margin-left: 10px;
-  margin-right: 10px;
+  padding: 0.5rem 1rem;
+  margin-left: 15px;
+  margin-right: 15px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  background-color: #007BFF;
+  color: #000000;
+  font-weight: 600;
+  border: none;
+  position: relative;
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 215, 0, 0.4);
+  background-color: #007BFF;
+  color: #000000;
 }
 
 /* Styles pour le toggler personnalisé */
@@ -217,7 +320,7 @@
   position: absolute;
   height: 2px;
   width: 100%;
-  background: #FFD700;
+  background: #007BFF;
   border-radius: 1px;
   opacity: 1;
   left: 0;
@@ -232,7 +335,7 @@
   display: block;
   height: 2px;
   width: 100%;
-  background: #FFD700;
+  background: #007BFF;
   border-radius: 1px;
   opacity: 1;
   left: 0;
@@ -265,42 +368,167 @@
 /* Adaptation pour mobile */
 @media (max-width: 991.98px) {
   .navbar-collapse {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
     background-color: #000000;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-top: 1rem;
+    padding: 1.5rem 1rem;
+    border-radius: 0;
+    margin-top: 0;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-    max-height: 80vh;
+    max-height: calc(100vh - 80px);
     overflow-y: auto;
+    z-index: 1000;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+  
+  .navbar-collapse.show {
+    display: flex !important;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .navbar-nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .mobile-top-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #333;
+    order: -1;
+  }
+  
+  .mobile-top-section::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #007BFF, transparent);
+    margin: 10px auto 0;
+  }
+  
+  .mobile-top-section .nav-item {
+    width: 100%;
+    border-bottom: none;
+    margin-bottom: 10px;
+  }
+  
+  .mobile-top-section .nav-btn {
+    margin: 8px auto;
+    width: 90%;
+  }
+  
+  .mobile-top-section .language-toggle {
+    margin: 5px auto;
+    padding: 10px 0;
+  }
+  
+  .nav-item {
+    padding: 2px 0;
+    border-bottom: 1px solid #333;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+  }
+  
+  .nav-item + .nav-item {
+    margin-top: 0;
+  }
+  
+  .nav-link {
+    display: block;
+    padding: 8px !important;
+    text-align: center;
+    color: #007BFF !important;
+    font-size: 18px;
+    width: 100%;
+  }
+  
+  .nav-link:hover {
+    background-color: #222;
+    border-radius: 5px;
+  }
+  
+  .nav-item:not(:last-child) {
+    border-bottom-color: rgba(51, 51, 51, 0.5);
+  }
+  
+  .custom-dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 8px;
   }
   
   .custom-dropdown-menu {
     position: static;
     box-shadow: none;
     border: none;
-    padding-left: 1rem;
     min-width: 100%;
-    transform: none;
-    margin-top: 0;
-    background-color: rgba(255, 255, 255, 0.05) !important;
+    background-color: #111 !important;
     border-radius: 4px;
+    flex-direction: column;
+    width: 100%;
+    display: none !important;
+    overflow: hidden;
+    max-height: 0;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: max-height 0.3s ease;
+    border-left: 3px solid #007BFF;
+    opacity: 0;
+  }
+  
+  .dropdown.show .custom-dropdown-menu {
+    display: block !important;
+    max-height: 500px; /* Hauteur maximale suffisante pour le contenu */
+    padding: 5px 0 !important;
+    opacity: 1;
   }
   
   .dropdown-grid {
-    display: block;
+    display: flex;
+    flex-direction: column;
     min-width: auto;
+    width: 100%;
   }
   
   .dropdown-column {
     margin-bottom: 15px;
+    width: 100% !important;
+    background-color: transparent !important;
   }
   
   .dropdown-item {
-    padding: 0.5rem 1rem;
+    padding: 10px 15px;
+    text-align: center;
+    color: #007BFF !important;
+    border-bottom: 1px solid #333;
+    width: 100%;
+    display: block;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #222 !important;
+    color: #ffffff !important;
+    transform: none;
   }
   
   .dropdown.show .custom-dropdown-menu {
-    transform: none;
+    transform: none !important;
+    display: block !important;
+    opacity: 1;
   }
   
   .nav-link::after {
@@ -308,31 +536,861 @@
   }
   
   .nav-btn {
-    margin: 10px 0;
-    display: inline-block;
+    margin: 15px auto;
+    display: block;
+    width: 90%;
+    right: 0;
+    position: relative;
+    padding: 12px;
+    font-size: 16px;
+    text-align: center;
   }
   
-  .navbar-nav {
-    margin-top: 15px;
+  .user-menu-container, .member-menu-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
+  
+  .user-dropdown-menu, .member-dropdown-menu {
+    position: static;
+    width: 90%;
+    margin: 5px auto 15px;
+    border-radius: 4px;
+    background-color: #111;
+    border: 1px solid #333;
+  }
+  
+  .user-dropdown-item, .member-dropdown-item {
+    color: #007BFF !important;
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+  }
+  
+  .user-dropdown-item:hover, .member-dropdown-item:hover {
+    background-color: #222;
+    color: #fff !important;
+  }
+  
+  .user-dropdown-item.logout-btn {
+    color: #ff6b6b !important;
+  }
+  
+  .jeunes-sections {
+    width: 100%;
+    background-color: transparent;
+    padding: 0;
+  }
+  
+  .developpement, .elite {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: transparent;
+    padding: 0;
+  }
+
+  .categories-menu {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Assurez-vous que le menu hamburger est bien visible */
+  .navbar-toggler {
+    z-index: 1100;
+    margin-right: 10px;
+  }
+  
+  .toggler-icon, .toggler-icon::before, .toggler-icon::after {
+    background-color: #007BFF;
+  }
+  
+  /* Ajustement pour le menu des catégories */
+  .nav-item.dropdown {
+    display: block;
+    width: 100%;
+  }
+  
+  /* Correction du positionnement des liens */
+  .language-toggle {
+    display: flex;
+    justify-content: center;
+    right: 0;
+    margin: 15px auto;
+    padding: 10px 0;
+  }
+  
+  /* Correction du menu membre et utilisateur */
+  .nav-item.ms-lg-3 {
+    margin-left: 0 !important;
+    width: 100%;
+  }
+  
+  .flag {
+    width: 30px;
+    height: 30px;
+  }
+  
+  /* Suppression des marges superflues */
+  .mobile-top-item.ms-lg-3 {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Séparation visuelle entre la section du haut et les liens */
+  .nav-item:not(.mobile-top-item):first-of-type {
+    margin-top: 10px;
+  }
+  
+  /* Styles pour les éléments de menu Catégories et Actualités */
+  .categories-item, .actualites-item {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .categories-item .nav-link, .actualites-item .nav-link {
+    padding: 8px !important;
+  }
+  
+  .categories-item {
+    border-bottom: none !important;
+  }
+  
+  .actualites-item {
+    border-top: none !important;
+    margin-top: -1px !important;
+  }
+  
+  /* Styles généraux pour les éléments de navigation */
+  .navbar-nav > li:not(.mobile-top-item) {
+    margin: 0 !important;
+    padding: 0 !important;
+    border-bottom: 1px solid rgba(51, 51, 51, 0.7);
+  }
+  
+  .navbar-nav > li:not(.mobile-top-item) .nav-link {
+    padding: 5px 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Correction pour le bouton Catégories */
+  .categories-item {
+    border-bottom: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Correction pour le menu déroulant des catégories */
+  .categories-item .dropdown-menu {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-left: 3px solid #007BFF;
+  }
+  
+  /* Correction pour le contenu du menu déroulant */
+  .dropdown-grid {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* S'assurer que le menu ne s'affiche que lorsqu'il est activé */
+  .custom-dropdown-menu {
+    display: none !important;
+  }
+  
+  .dropdown.show .custom-dropdown-menu {
+    display: block !important;
+  }
+  
+  /* Rendre la transition plus fluide */
+  .categories-item.dropdown.show + .actualites-item {
+    margin-top: 0 !important;
+  }
+  
+  /* Optimisation de l'affichage des catégories */
+  .categories-item.dropdown {
+    height: auto;
+  }
+  
+  /* Contrôle précis de l'affichage du menu catégories */
+  .categories-item .dropdown-menu.custom-dropdown-menu {
+    position: static !important;
+    transform: none !important;
+    transition: opacity 0.3s ease, max-height 0.3s ease !important;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-top: none !important;
+    border-bottom: none !important;
+  }
+  
+  .categories-item.dropdown.show .dropdown-menu.custom-dropdown-menu {
+    max-height: 500px;
+    padding: 5px 0 !important;
+  }
+  
+  /* Ajustement des éléments de navigation */
+  .nav-item {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Suppression de la transition qui peut créer un espace */
+  .navbar-collapse {
+    transition: transform 0.3s ease, opacity 0.3s ease !important;
+  }
+  
+  /* Amélioration de l'apparence du dropdown toggle */
+  .custom-dropdown-toggle::after {
+    margin-left: 5px;
+    vertical-align: middle;
+  }
+  
+  /* Éliminer l'espace entre les éléments */
+  .navbar-nav {
+    gap: 0 !important;
+  }
+}
+
+/* Réduire l'espacement entre les éléments de navigation */
+.navbar-nav .nav-item {
+  margin-left: -15px;
+  margin-right: -15px;
 }
 
 /* Sélecteur de langue */
 .language-toggle {
   cursor: pointer;
-  margin-left: 1rem;
+  margin-left: 0.5rem;
+  position: relative;
+  right: 20px;
 }
 
 .flag {
   display: inline-block;
   width: 24px;
   height: 24px;
-  border-radius: 50%;
   background-size: cover;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
 }
 
 .flag-fr {
-  background-image: url('/images/fr-flag.png');
-  /* Si l'image n'existe pas, utiliser une couleur */
-  background-color: #003399;
+  background-color: #002395;
+}
+
+.flag-fr::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 33.33%;
+  height: 100%;
+  background-color: #0055A4;
+}
+
+.flag-fr::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 33.33%;
+  height: 100%;
+  background-color: #ED2939;
+}
+
+.flag-en {
+  background-color: #012169;
+  position: relative;
+}
+
+.flag-en::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, transparent 45%, #FFFFFF 45%, #FFFFFF 55%, transparent 55%),
+              linear-gradient(45deg, transparent 45%, #FFFFFF 45%, #FFFFFF 55%, transparent 55%);
+}
+
+.flag-en::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 40%, #C8102E 40%, #C8102E 60%, transparent 60%),
+              linear-gradient(180deg, transparent 40%, #C8102E 40%, #C8102E 60%, transparent 60%);
+}
+
+/* Style pour les catégories mises en évidence dans le menu déroulant */
+.dropdown-item.highlighted-category {
+  font-weight: 700;
+  background-color: rgba(255, 215, 0, 0.1);
+  position: relative;
+}
+
+.dropdown-item.highlighted-category::before {
+  content: "★";
+  position: absolute;
+  left: 0.3rem;
+  color: #007BFF;
+}
+
+.dropdown-item.highlighted-category:hover {
+  background-color: rgba(255, 215, 0, 0.25) !important;
+}
+
+/* Styles pour les boutons de raccourci de catégories */
+.category-shortcut {
+  margin: 0 2px;
+}
+
+.category-btn {
+  padding: 0.4rem !important;
+  margin: 0 0.15rem;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-badge {
+  background: linear-gradient(135deg, #007BFF, #0056b3);
+  color: #000;
+  font-weight: 700;
+  padding: 0.3rem 0.6rem;
+  border-radius: 30px;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+  text-shadow: none;
+}
+
+.category-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.6);
+}
+
+.category-shortcut.u11 .category-badge {
+  background: linear-gradient(135deg, #007BFF, #004494);
+}
+
+.category-shortcut.u17 .category-badge {
+  background: linear-gradient(135deg, #007BFF, #0069d9);
+}
+
+/* Style spécifique pour mobile */
+@media (max-width: 991.98px) {
+  .category-shortcut {
+    margin-bottom: 5px;
+  }
+  
+  .category-badge {
+    width: 100%;
+    text-align: center;
+    font-size: 0.95rem;
+    padding: 0.5rem;
+  }
+}
+
+/* Styles spécifiques pour le menu des catégories */
+.categories-menu {
+  width: auto;
+  min-width: 500px !important;
+  max-width: 90vw;
+  padding: 20px;
+  left: 50%;
+  transform: translateX(-50%) !important;
+  overflow: visible !important;
+}
+
+.dropdown.show .categories-menu {
+  display: block;
+  transform: translateX(-50%) translateY(0) !important;
+  opacity: 1;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: 170px 120px 150px;
+  gap: 25px;
+  background-color: #000;
+  color: #fff;
+}
+
+.categories-column {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.jeunes-sections {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 15px;
+}
+
+.categories-header {
+  color: #ccc;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.category-item {
+  color: #007BFF;
+  text-decoration: none;
+  padding: 8px 5px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  text-align: left;
+  font-size: 1.1rem;
+  white-space: nowrap;
+  display: block;
+}
+
+.category-item:hover {
+  background-color: rgba(255, 215, 0, 0.1);
+  color: #fff;
+  transform: translateX(3px);
+}
+
+.highlight-category {
+  position: relative;
+  font-weight: 700;
+}
+
+.highlight-category::before {
+  content: "★";
+  position: absolute;
+  left: -15px;
+  color: #007BFF;
+  font-size: 0.8rem;
+}
+
+/* Responsive pour le menu des catégories */
+@media (max-width: 991.98px) {
+  .categories-menu {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    min-width: auto !important;
+    left: 0 !important;
+  }
+  
+  .categories-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .jeunes-sections {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .category-item {
+    padding: 10px 5px;
+  }
+  
+  .dropdown.show .categories-menu {
+    transform: none !important;
+  }
+}
+
+/* Styles pour le menu mobile ouvert */
+.navbar.mobile-menu-open {
+  background-color: #000000 !important;
+}
+
+/* Empêcher le défilement du body quand le menu est ouvert */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* Style pour le conteneur des éléments du haut du menu mobile */
+.mobile-top-section {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+  /* Structure du menu mobile */
+  .navbar-collapse {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    right: 0;
+    background-color: #000000;
+    padding: 1.5rem 1rem;
+    border-radius: 0;
+    margin-top: 0;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    z-index: 1000;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+  }
+  
+  .navbar-collapse.show {
+    display: flex !important;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .navbar-nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  /* Section du haut avec les boutons Espace Membre et langue */
+  .mobile-top-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #333;
+    order: -1;
+  }
+  
+  .mobile-top-section::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #007BFF, transparent);
+    margin: 10px auto 0;
+  }
+  
+  .mobile-top-section .nav-item {
+    width: 100%;
+    border-bottom: none;
+    margin-bottom: 10px;
+  }
+  
+  .mobile-top-section .nav-btn {
+    margin: 5px auto;
+    display: block;
+    width: 85%;
+  }
+  
+  .mobile-top-section .language-toggle {
+    margin: 10px auto;
+    right: 0;
+  }
+  
+  /* Style des éléments de navigation */
+  .nav-item {
+    padding: 5px 0;
+    border-bottom: 1px solid #333;
+    width: 100%;
+    text-align: center;
+    margin: 2px 0;
+  }
+  
+  .nav-link {
+    display: block;
+    padding: 12px !important;
+    text-align: center;
+    color: #007BFF !important;
+    font-size: 18px;
+    width: 100%;
+  }
+  
+  .nav-link:hover {
+    background-color: #222;
+    border-radius: 5px;
+  }
+  
+  /* Retirer les marges superflues */
+  .navbar-nav > li:not(.mobile-top-item) {
+    margin-top: 5px;
+  }
+}
+
+/* Style pour le menu déroulant des catégories */
+@media (min-width: 992px) {
+  .mobile-top-item {
+    order: initial;
+  }
+}
+
+/* Style pour le conteneur des éléments du haut du menu mobile */
+.mobile-top-section {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+  .mobile-top-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #333;
+    order: -1;
+  }
+  
+  .mobile-top-section::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #007BFF, transparent);
+    margin: 10px auto 0;
+  }
+  
+  .mobile-top-section .nav-item {
+    width: 100%;
+    border-bottom: none;
+    margin-bottom: 10px;
+  }
+  
+  .mobile-top-section .nav-btn {
+    margin: 5px auto;
+    display: block;
+    width: 85%;
+  }
+  
+  /* Ajuster la structure du menu */
+  .navbar-nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  /* Retirer les marges superflues */
+  .navbar-nav > li:not(.mobile-top-item) {
+    margin-top: 5px;
+  }
+}
+
+/* Cacher la section en mode desktop */
+@media (min-width: 992px) {
+  .mobile-top-section {
+    display: none;
+  }
+}
+
+/* Desktop navigation buttons */
+.desktop-nav-buttons {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1050;
+}
+
+.language-selector {
+  position: relative;
+  margin-right: 5px;
+}
+
+.desktop-nav-buttons .nav-btn {
+  position: static;
+  right: auto;
+  margin-left: 15px;
+  white-space: nowrap;
+}
+
+/* Styles pour la barre de navigation en desktop */
+@media (min-width: 992px) {
+  .navbar-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+  }
+  
+  .navbar-nav .nav-item {
+    margin: 0 3px;
+    display: block !important;
+    visibility: visible !important;
+  }
+  
+  .navbar .container {
+    padding-right: 220px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Ajustement spécifique pour le bouton Contact */
+  .nav-item.contact-item {
+    margin-right: 5px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  .navbar .container {
+    padding-right: 200px;
+  }
+  
+  .nav-link {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  .navbar .container {
+    padding-right: 280px;
+  }
+}
+
+@media (max-width: 991.98px) {
+  .navbar .container {
+    padding-right: 15px;
+  }
+  
+  .desktop-nav-buttons {
+    display: none !important;
+  }
+}
+
+/* Styles pour les boutons de langue */
+.language-btn {
+  color: #007BFF;
+  background: transparent;
+  border: none;
+  padding: 5px 10px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.language-btn:hover {
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.language-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #000000;
+  border: 1px solid #333;
+  border-radius: 4px;
+  min-width: 120px;
+  z-index: 1000;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  margin-top: 5px;
+}
+
+.language-dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  color: #007BFF;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.language-dropdown-item:hover {
+  background-color: #222;
+  color: #FFFFFF;
+}
+
+/* Améliorer la gestion du z-index pour éviter les problèmes de superposition */
+.dropdown {
+  position: relative;
+}
+
+/* Assurer que les éléments du menu sont cliquables */
+.dropdown-menu .dropdown-item {
+  position: relative;
+  z-index: 1020;
+}
+
+/* Optimisation pour mobile */
+@media (max-width: 991.98px) {
+  .custom-dropdown-menu {
+    transition: max-height 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .custom-dropdown-menu.categories-menu {
+    max-height: 0;
+    overflow: hidden;
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .dropdown.show .custom-dropdown-menu.categories-menu {
+    max-height: 500px;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Assurer que les liens dans les menus déroulants sont cliquables */
+.dropdown-item {
+  position: relative;
+  z-index: 1020;
+  cursor: pointer !important;
+}
+
+/* Styles pour les menus déroulants en mode mobile */
+@media (max-width: 991.98px) {
+  .custom-dropdown-menu.categories-menu {
+    position: static;
+    width: 100% !important;
+    min-width: 100% !important;
+    transform: none !important;
+    left: 0;
+    margin-top: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    transition: height 0.3s ease, opacity 0.3s ease;
+  }
+  
+  .dropdown.show .custom-dropdown-menu.categories-menu {
+    height: auto;
+    padding: 15px;
+    overflow: visible;
+  }
+  
+  .dropdown-grid {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .dropdown-column {
+    width: 100% !important;
+    border-left: none !important;
+    padding: 0 !important;
+  }
+  
+  .dropdown-column + .dropdown-column {
+    margin-top: 15px;
+    padding-top: 15px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
 } 

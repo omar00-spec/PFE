@@ -12,8 +12,11 @@ function Footer() {
           <div className="row gy-4">
             <div className="col-lg-3 col-md-6">
               <div className="footer-logo-section">
-                <img src="/images/logo-ACOS.png" alt="ACOS Football Academy" className="footer-logo mb-3" />
-                <h5 className="text-gold">ACOS Football Academy</h5>
+                <div className="footer-logos d-flex align-items-center mb-3" style={{ gap: '8px' }}>
+                  <img src="/images/image-removebg-preview (1).png" alt="ITTIHAD EL OULFA FOOTBALL CLUB Logo" className="footer-logo" />
+                  <img src="/images/image1-removebg-preview.png" alt="ITTIHAD EL OULFA FOOTBALL CLUB Secondary Logo" className="footer-logo" />
+                </div>
+                <h5 className="text-gold">ITTIHAD EL OULFA FOOTBALL CLUB</h5>
                 <p className="mt-3 mb-4">Développer les talents de demain à travers une formation d'excellence et des valeurs fortes.</p>
               </div>
             </div>
@@ -79,10 +82,10 @@ function Footer() {
         <div className="container">
           <div className="row">
             <div className="col-md-6 text-center text-md-start">
-              <p className="mb-0">&copy; {new Date().getFullYear()} ACOS Football Academy. Tous droits réservés.</p>
+              <p className="mb-0">&copy; {new Date().getFullYear()} ITTIHAD EL OULFA FOOTBALL CLUB. Tous droits réservés.</p>
             </div>
             <div className="col-md-6 text-center text-md-end">
-              <p className="mb-0">Conçu avec <span className="text-gold">♥</span> par ACOS Development Team</p>
+              <p className="mb-0">Conçu avec <span className="text-gold">♥</span> par ITTIHAD EL OULFA Dev Team</p>
             </div>
           </div>
         </div>

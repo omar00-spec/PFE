@@ -124,9 +124,11 @@ const Media = () => {
                     <div className="video-item">
                       <div className="video-thumbnail">
                         {/* Pour les vidéos embed, utilisez un iframe */}
-                        {video.file_path.includes('embed') ? (
+                        {video.file_path.includes('youtube') || video.file_path.includes('embed') ? (
                           <iframe 
-                            src={video.file_path} 
+                            src={video.file_path.includes('youtube') && !video.file_path.includes('embed') ? 
+                                 `https://www.youtube.com/embed/${video.file_path.split('v=')[1] || video.file_path.split('/').pop()}` : 
+                                 video.file_path}
                             title={video.title}
                             className="img-fluid video-iframe"
                             frameBorder="0"
@@ -134,7 +136,12 @@ const Media = () => {
                             allowFullScreen
                           ></iframe>
                         ) : (
-                          <img src={video.file_path} alt={video.title} className="img-fluid" />
+                          <video 
+                            src={video.file_path.startsWith('http') ? video.file_path : `${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/storage/${video.file_path}`} 
+                            controls 
+                            className="img-fluid"
+                            poster={video.thumbnail || ''}
+                          />
                         )}
                         <div className="video-play-button" onClick={() => openMediaModal(video, 'video')}>
                           <FontAwesomeIcon icon={faExpand} />
@@ -172,7 +179,11 @@ const Media = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className="media-hero">
+      <div className="media-hero" style={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/IMG-20250601-WA0020.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-10 mx-auto text-center">
@@ -257,7 +268,9 @@ const Media = () => {
               ) : (
                 <div className="media-modal-video">
                   <iframe 
-                    src={selectedMedia.file_path} 
+                    src={selectedMedia.file_path.includes('youtube') && !selectedMedia.file_path.includes('embed') ? 
+                         `https://www.youtube.com/embed/${selectedMedia.file_path.split('v=')[1] || selectedMedia.file_path.split('/').pop()}` : 
+                         selectedMedia.file_path} 
                     title={selectedMedia.title}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

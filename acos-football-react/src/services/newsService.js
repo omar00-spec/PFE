@@ -4,7 +4,12 @@ export const getNewsOnly = async () => {
   try {
     // Utiliser la nouvelle API ou filtrer par type
     const res = await api.get('/api/news?type=news');
-    return res.data;
+    // Vérifier que les URL des images sont bien formatées
+    const newsWithFormattedImages = res.data.map(item => {
+      console.log(`Image originale pour ${item.id}: ${item.image}`);
+      return item;
+    });
+    return newsWithFormattedImages;
   } catch (error) {
     console.error("Erreur lors de la récupération des actualités:", error);
     return [];
@@ -15,7 +20,12 @@ export const getEventsOnly = async () => {
   try {
     // Utiliser la nouvelle API ou filtrer par type
     const res = await api.get('/api/news?type=event');
-    return res.data;
+    // Vérifier que les URL des images sont bien formatées
+    const eventsWithFormattedImages = res.data.map(item => {
+      console.log(`Image originale pour l'événement ${item.id}: ${item.image}`);
+      return item;
+    });
+    return eventsWithFormattedImages;
   } catch (error) {
     console.error("Erreur lors de la récupération des événements:", error);
     return [];

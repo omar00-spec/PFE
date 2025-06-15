@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf, faDownload, faPaperPlane, faUpload, faFile, faCheck, faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -17,7 +17,6 @@ const RegistrationForm = () => {
     category: '',
     address: '',
     city: '',
-    postalCode: '',
     playerPhone: '',
     playerEmail: '',
     parentName: '',
@@ -47,6 +46,23 @@ const RegistrationForm = () => {
     idCopy: '',
     paymentProof: ''
   });
+
+  // Effet pour nettoyer les écouteurs d'événements à la fin
+  useEffect(() => {
+    // Empêcher les redirections accidentelles
+    const handleBeforeUnload = (e) => {
+      if (formStatus.loading) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [formStatus.loading]);
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -85,6 +101,7 @@ const RegistrationForm = () => {
   };
 
   const handleSubmit = async (e) => {
+    // Empêcher le comportement par défaut
     e.preventDefault();
     
     // Validation
@@ -148,6 +165,7 @@ const RegistrationForm = () => {
           // Rediriger vers la page correspondante
           switch (formData.paymentMethod) {
             case 'Virement bancaire':
+              // Utiliser navigate de react-router au lieu de window.location
               navigate('/payment/bank-transfer', { 
                 state: { registration_id: response.data.registration_id } 
               });
@@ -187,7 +205,7 @@ const RegistrationForm = () => {
         error: true,
         loading: false,
         message: error.response?.data?.errors ? 'Veuillez corriger les erreurs dans le formulaire.' : 'Une erreur est survenue lors de l\'envoi. Veuillez réessayer ultérieurement.'
-    });
+      });
     }
   };
 
@@ -200,7 +218,6 @@ const RegistrationForm = () => {
       category: '',
       address: '',
       city: '',
-      postalCode: '',
       playerPhone: '',
       playerEmail: '',
       parentName: '',
@@ -233,7 +250,7 @@ const RegistrationForm = () => {
     });
   };
 
-  const downloadPdfForm = () => {
+  const downloadPdfForm = (e) => {
     // In a real application, this would link to a PDF file
     alert('Téléchargement du formulaire PDF...');
   };
@@ -324,18 +341,21 @@ const RegistrationForm = () => {
                 <select
                   className="form-select"
                   id="category"
-                      name="category"
+                  name="category"
                   value={formData.category}
-                      onChange={handleChange}
+                  onChange={handleChange}
                   required
                 >
                   <option value="">Sélectionner une catégorie</option>
-                  <option value="1">U5-U6 (2019-2020)</option>
-                  <option value="2">U7-U8 (2017-2018)</option>
-                  <option value="3">U9-U10 (2015-2016)</option>
-                  <option value="4">U11-U12 (2013-2014)</option>
-                  <option value="5">U13-U15 (2010-2012)</option>
-                  <option value="6">U16-U19 (2006-2009)</option>
+                  <option value="1">U5</option>
+                  <option value="2">U7</option>
+                  <option value="3">U9</option>
+                  <option value="4">U11</option>
+                  <option value="5">U13</option>
+                  <option value="6">U15</option>
+                  <option value="7">U17</option>
+                  <option value="8">U19</option>
+                  <option value="9">SENIOR</option>
                 </select>
               </div>
             </div>
@@ -352,29 +372,16 @@ const RegistrationForm = () => {
               />
             </div>
             
-            <div className="row mb-3">
-              <div className="col-md-8">
-                <label htmlFor="city" className="form-label">Ville</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="city"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="col-md-4">
-                <label htmlFor="postalCode" className="form-label">Code postal</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="postalCode"
-                  name="postalCode"
-                  value={formData.postalCode}
-                  onChange={handleChange}
-                />
-              </div>
+            <div className="mb-3">
+              <label htmlFor="city" className="form-label">Ville</label>
+              <input
+                type="text"
+                className="form-control"
+                id="city"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+              />
             </div>
             
             <div className="row mb-3">

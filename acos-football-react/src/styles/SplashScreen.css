@@ -35,7 +35,7 @@
   width: 280px;
   height: auto;
   animation: pulsate 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(247, 166, 0, 0.5));
+  filter: drop-shadow(0 0 10px rgba(12, 193, 224, 0.5));
 }
 
 .splash-spinner {
@@ -45,9 +45,9 @@
 .spinner {
   width: 50px;
   height: 50px;
-  border: 5px solid rgba(247, 166, 0, 0.3);
+  border: 5px solid rgba(12, 193, 224, 0.3);
   border-radius: 50%;
-  border-top-color: #f7a600;
+  border-top-color: #0cc1e0;
   animation: spinner 1s linear infinite;
 }
 

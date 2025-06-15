@@ -31,11 +31,18 @@ function SplashScreen({ children }) {
   return (
     <div className={`splash-screen ${fadeOut ? 'fade-out' : ''}`}>
       <div className="splash-content">
-        <img 
-          src="/images/logo-ACOS.png" 
-          alt="ACOS Football Academy" 
-          className="splash-logo" 
-        />
+        <div className="splash-logos" style={{ display: 'flex', gap: '10px', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src="/images/image-removebg-preview (1).png"
+            alt="ITTIHAD EL OULFA FOOTBALL CLUB Logo"
+            className="splash-logo"
+          />
+          <img
+            src="/images/image1-removebg-preview.png"
+            alt="ITTIHAD EL OULFA FOOTBALL CLUB Secondary Logo"
+            className="splash-logo"
+          />
+        </div>
         <div className="splash-spinner">
           <div className="spinner"></div>
         </div>

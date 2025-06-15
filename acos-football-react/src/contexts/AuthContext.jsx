@@ -3,32 +3,45 @@ import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
-// Cru00e9er le contexte
+// Créer le contexte
 const AuthContext = createContext();
 
-// Hook personnalisu00e9 pour utiliser le contexte
+// Hook personnalisé pour utiliser le contexte
 export const useAuth = () => useContext(AuthContext);
 
 // Fournisseur du contexte
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [playerData, setPlayerData] = useState(null);
+  const [userType, setUserType] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
-  // Vu00e9rifier l'authentification au chargement
+  // Vérifier l'authentification au chargement
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('token');
+      const storedUserType = localStorage.getItem('userType');
       
       if (!token) {
         setLoading(false);
         return;
       }
       
+      // Stocker le type d'utilisateur
+      setUserType(storedUserType);
+      
       try {
-        // Ru00e9cupu00e9rer les informations du joueur
-        const response = await axios.get(`${apiUrl}/player/profile`, {
+        // Selon le type d'utilisateur, récupérer les informations appropriées
+        let endpoint = '/player/profile';
+        
+        if (storedUserType === 'coach') {
+          endpoint = '/coach/profile';
+        } else if (storedUserType === 'parent') {
+          endpoint = '/parent/profile';
+        }
+        
+        const response = await axios.get(`${apiUrl}${endpoint}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -36,14 +49,17 @@ export const AuthProvider = ({ children }) => {
         
         if (response.data.success) {
           setCurrentUser(response.data.user);
-          setPlayerData({
-            player: response.data.player,
-            category: response.data.category
-          });
+          
+          if (storedUserType === 'player') {
+            setPlayerData({
+              player: response.data.player,
+              category: response.data.category
+            });
+          }
         }
       } catch (error) {
-        setError('Session expiru00e9e ou invalide');
-        // Supprimer les donnu00e9es locales si le token est invalide
+        setError('Session expirée ou invalide');
+        // Supprimer les données locales si le token est invalide
         if (error.response && error.response.status === 401) {
           logout();
         }
@@ -56,20 +72,36 @@ export const AuthProvider = ({ children }) => {
   }, []);
   
   // Fonction de connexion
-  const login = async (email, password) => {
+  const login = async (email, password, type = 'player') => {
     try {
-      const response = await axios.post(`${apiUrl}/player/login`, { email, password });
+      const endpoint = type === 'player' ? '/player/login' : 
+                       type === 'coach' ? '/coach/login' : 
+                       type === 'parent' ? '/parent/login' : '/login';
+      
+      const response = await axios.post(`${apiUrl}${endpoint}`, { email, password });
       
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        localStorage.setItem('player', JSON.stringify(response.data.player));
+        localStorage.setItem('userType', type);
+        
+        if (type === 'player') {
+          localStorage.setItem('player', JSON.stringify(response.data.player));
+        } else if (type === 'coach') {
+          localStorage.setItem('coach', JSON.stringify(response.data.coach));
+        } else if (type === 'parent') {
+          localStorage.setItem('parent', JSON.stringify(response.data.parent));
+        }
         
         setCurrentUser(response.data.user);
-        setPlayerData({
-          player: response.data.player,
-          category: response.data.category
-        });
+        setUserType(type);
+        
+        if (type === 'player') {
+          setPlayerData({
+            player: response.data.player,
+            category: response.data.category
+          });
+        }
         
         return { success: true };
       }
@@ -81,33 +113,48 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  // Fonction de du00e9connexion
+  // Fonction de déconnexion
   const logout = async () => {
     const token = localStorage.getItem('token');
+    const currentUserType = localStorage.getItem('userType');
     
     if (token) {
       try {
-        await axios.post(`${apiUrl}/player/logout`, {}, {
+        let endpoint = '/player/logout';
+        
+        if (currentUserType === 'coach') {
+          endpoint = '/coach/logout';
+        } else if (currentUserType === 'parent') {
+          endpoint = '/parent/logout';
+        }
+        
+        await axios.post(`${apiUrl}${endpoint}`, {}, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
       } catch (error) {
-        console.error('Erreur lors de la du00e9connexion:', error);
+        console.error('Erreur lors de la déconnexion:', error);
       }
     }
     
-    // Supprimer les donnu00e9es locales
+    // Supprimer les données locales
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('userType');
     localStorage.removeItem('player');
+    localStorage.removeItem('coach');
+    localStorage.removeItem('parent');
+    localStorage.removeItem('players');
+    localStorage.removeItem('registrations');
     
-    // Ru00e9initialiser l'u00e9tat
+    // Réinitialiser l'état
     setCurrentUser(null);
     setPlayerData(null);
+    setUserType(null);
   };
   
-  // Fonction d'inscription/vu00e9rification de joueur
+  // Fonction d'inscription/vérification de joueur
   const registerPlayer = async (playerData) => {
     try {
       const response = await axios.post(`${apiUrl}/player/check-and-register`, playerData);
@@ -116,21 +163,22 @@ export const AuthProvider = ({ children }) => {
         return {
           success: true,
           password: response.data.password,
-          message: 'Compte cru00e9u00e9 avec succu00e8s'
+          message: 'Compte créé avec succès'
         };
       }
     } catch (error) {
       return {
         success: false,
-        message: error.response?.data?.message || 'Erreur lors de la cru00e9ation du compte'
+        message: error.response?.data?.message || 'Erreur lors de la création du compte'
       };
     }
   };
   
-  // Valeurs u00e0 exposer dans le contexte
+  // Valeurs à exposer dans le contexte
   const value = {
     currentUser,
     playerData,
+    userType,
     loading,
     error,
     login,

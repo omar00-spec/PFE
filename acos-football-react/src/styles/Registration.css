@@ -1,11 +1,12 @@
 /* Hero Section */
 .registration-hero {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/461491019_122109682772532835_7308480507067695823_n.jpeg');
-  background-size: cover;
-  background-position: center;
-  padding: 120px 0;
-  margin-bottom: 0;
+  padding: 120px 0 80px;
   position: relative;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .registration-hero h1 {
@@ -17,7 +18,7 @@
 .registration-hero .section-divider {
   height: 3px;
   width: 80px;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
 }
 
 /* Process Steps */
@@ -33,7 +34,7 @@
   top: 20px;
   bottom: 20px;
   width: 2px;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   z-index: 0;
 }
 
@@ -52,14 +53,14 @@
   width: 70px;
   height: 70px;
   border-radius: 50%;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
   font-weight: bold;
-  box-shadow: 0 0 15px rgba(247, 166, 0, 0.5);
+  box-shadow: 0 0 15px rgba(12, 193, 224, 0.5);
   flex-shrink: 0;
 }
 
@@ -95,12 +96,12 @@
 
 .accordion-button:not(.collapsed) {
   color: #fff;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
 }
 
 .accordion-button:focus {
   box-shadow: none;
-  border-color: #f7a600;
+  border-color: #0cc1e0;
 }
 
 .accordion-body {

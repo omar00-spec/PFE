@@ -37,47 +37,60 @@ function CategoryDetail() {
     const fetchCategoryData = async () => {
       try {
         setIsLoading(true);
-        const categoryResponse = await api.get(`/api/categories?name=${name}`);
-        if (categoryResponse.data.length === 0) {
+        // Vérifier si le nom de la catégorie est valide
+        if (!name) {
+          throw new Error('Nom de catégorie invalide');
+        }
+
+        const categoryResponse = await api.get(`/api/categories?name=${encodeURIComponent(name)}`);
+        if (!categoryResponse.data || categoryResponse.data.length === 0) {
           throw new Error('Catégorie non trouvée');
         }
+
         const categoryData = categoryResponse.data[0];
         setCategory(categoryData);
         
-        // Fetch all related data in parallel
-        const [coachesRes, schedulesData, matchesData, playersRes, mediaRes] = await Promise.all([
-          api.get(`/api/coaches?category_id=${categoryData.id}`),
-          getSchedulesByCategory(categoryData.id),
-          getMatchesByCategory(categoryData.id),
-          api.get(`/api/players?category_id=${categoryData.id}`),
-          api.get(`/api/media/category/${categoryData.id}`).catch(() => ({ data: [] }))
-        ]);
+        // Fetch all related data in parallel with error handling
+        try {
+          const [coachesRes, schedulesData, matchesData, playersRes, mediaRes] = await Promise.all([
+            api.get(`/api/coaches?category_id=${categoryData.id}`),
+            getSchedulesByCategory(categoryData.id),
+            getMatchesByCategory(categoryData.id),
+            api.get(`/api/players?category_id=${categoryData.id}`),
+            api.get(`/api/media/category/${categoryData.id}`).catch(() => ({ data: [] }))
+          ]);
 
-        setCoaches(coachesRes.data);
-        setSchedules(schedulesData);
-        setMatches(matchesData);
-        setPlayers(playersRes.data);
-        
-        const photos = mediaRes.data
-          .filter(item => item.type === 'photo')
-          .map(photo => ({
-            id: photo.id,
-            src: photo.file_path,
-            alt: photo.title,
-            title: photo.title,
-            category: categoryData.name
-          }));
-        
-        const videos = mediaRes.data
-          .filter(item => item.type === 'video')
-          .map(video => ({
-            id: video.id,
-            src: video.file_path,
-            title: video.title,
-            category: categoryData.name
-          }));
-        
-        setMedia({ photos, videos });
+          setCoaches(coachesRes.data);
+          setSchedules(schedulesData);
+          setMatches(matchesData);
+          setPlayers(playersRes.data);
+          
+          const photos = mediaRes.data
+            .filter(item => item.type === 'photo')
+            .map(photo => ({
+              id: photo.id,
+              src: photo.file_path,
+              alt: photo.title,
+              title: photo.title,
+              category: categoryData.name
+            }));
+          
+          const videos = mediaRes.data
+            .filter(item => item.type === 'video')
+            .map(video => ({
+              id: video.id,
+              src: video.file_path,
+              title: video.title,
+              category: categoryData.name,
+              thumbnail: video.thumbnail || null
+            }));
+          
+          setMedia({ photos, videos });
+        } catch (err) {
+          console.error("Erreur lors du chargement des données associées:", err);
+          // Ne pas bloquer l'affichage si les données associées échouent
+        }
+
         setIsLoading(false);
       } catch (err) {
         console.error("Erreur lors du chargement des données:", err);
@@ -107,8 +120,10 @@ function CategoryDetail() {
   const getColumnClass = (itemCount) => {
     if (itemCount === 1) return 'col-12';
     if (itemCount === 2) return 'col-md-6';
-    if (itemCount <= 4) return 'col-md-6 col-lg-3';
-    return 'col-md-4 col-lg-3';
+    if (itemCount <= 3) return 'col-md-4';
+    if (itemCount <= 6) return 'col-md-4 col-lg-4';
+    if (itemCount <= 8) return 'col-md-4 col-lg-3';
+    return 'col-md-6 col-lg-4 col-xl-3'; // Pour un grand nombre d'éléments
   };
 
   const formatDate = (dateString) => {
@@ -149,7 +164,6 @@ function CategoryDetail() {
       <CategoryHeader 
         title={`Catégorie ${name.toUpperCase()}`}
         subtitle={`${category.age_min}-${category.age_max} ans`}
-        images={['/images/category-header.jpg']}
       />
 
       <div className="category-content">
@@ -380,29 +394,57 @@ function CategoryDetail() {
 
         {activeTab === 'media' && (
           <div className="category-tab-content fade-in">
+            
+            {/* Onglets pour photos/vidéos */}
+            <div className="media-tabs mb-4">
+              <ul className="nav nav-pills">
+                <li className="nav-item">
+                  <button 
+                    className={`nav-link ${media.photos.length > 0 ? 'active' : 'disabled'}`}
+                    onClick={() => document.getElementById('photos-section').scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    <FontAwesomeIcon icon={faImages} className="me-2" />
+                    Galerie photos
+                  </button>
+                </li>
+                <li className="nav-item ms-3">
+                  <button 
+                    className={`nav-link ${media.videos.length > 0 ? '' : 'disabled'}`}
+                    onClick={() => document.getElementById('videos-section').scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    <FontAwesomeIcon icon={faVideo} className="me-2" />
+                    Galerie vidéos
+                  </button>
+                </li>
+              </ul>
+            </div>
+
             {/* Galerie Photos */}
-            <div className="category-section gallery-section">
+            <div id="photos-section" className="category-section gallery-section">
               <div className="section-header">
                 <FontAwesomeIcon icon={faImages} />
                 <h2>Galerie photo</h2>
               </div>
               {media.photos.length > 0 ? (
-                <div className="gallery-grid">
-                  {media.photos.map((photo, index) => (
-                    <div key={index} className={`gallery-item-wrapper ${getColumnClass(media.photos.length)}`}>
-                      <div className="gallery-item" onClick={() => openMediaModal(photo, 'photo')}>
-                        <img src={photo.src} alt={photo.alt} loading="lazy" />
-                        <div className="gallery-overlay">
-                          <div className="gallery-caption">
-                            <h5>{photo.title}</h5>
-                          </div>
-                          <div className="gallery-icon">
-                            <FontAwesomeIcon icon={faExpand} />
+                <div className="photo-gallery">
+                  <div className="row g-4">
+                    {media.photos.map((photo, index) => (
+                      <div key={index} className={`gallery-column ${getColumnClass(media.photos.length)}`}>
+                        <div className="gallery-item">
+                          <img src={photo.src} alt={photo.alt} className="img-fluid" loading="lazy" />
+                          <div className="gallery-overlay">
+                            <div className="gallery-caption">
+                              <h5>{photo.title}</h5>
+                              <p>{photo.category}</p>
+                            </div>
+                            <div className="gallery-icon" onClick={() => openMediaModal(photo, 'photo')}>
+                              <FontAwesomeIcon icon={faExpand} />
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="gallery-placeholder">
@@ -413,33 +455,50 @@ function CategoryDetail() {
             </div>
 
             {/* Galerie Vidéos */}
-            <div className="category-section video-section">
+            <div id="videos-section" className="category-section video-section mt-5">
               <div className="section-header">
                 <FontAwesomeIcon icon={faVideo} />
                 <h2>Vidéos</h2>
               </div>
               {media.videos.length > 0 ? (
-                <div className="video-grid">
-                  {media.videos.map((video, index) => (
-                    <div key={index} className={`video-item-wrapper ${getColumnClass(media.videos.length)}`}>
-                      <div className="video-item">
-                        <div className="video-thumbnail" onClick={() => openMediaModal(video, 'video')}>
-                          <iframe 
-                            src={`https://www.youtube.com/embed/${video.src}`} 
-                            title={video.title}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            loading="lazy"
-                          ></iframe>
-                          <div className="video-play-button">
-                            <FontAwesomeIcon icon={faExpand} />
+                <div className="video-gallery">
+                  <div className="row g-4">
+                    {media.videos.map((video, index) => (
+                      <div key={index} className={`gallery-column ${getColumnClass(media.videos.length)}`}>
+                        <div className="video-item">
+                          <div className="video-thumbnail">
+                            {video.src.includes('youtube') ? (
+                              <div className="youtube-container">
+                                <iframe 
+                                  src={`https://www.youtube-nocookie.com/embed/${video.src.split('v=')[1]?.split('&')[0] || video.src.split('/').pop()}`}
+                                  title={video.title}
+                                  className="img-fluid video-iframe"
+                                  frameBorder="0"
+                                  loading="lazy"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                  allowFullScreen
+                                ></iframe>
+                              </div>
+                            ) : (
+                              <video 
+                                src={video.src} 
+                                controls 
+                                preload="metadata"
+                                className="img-fluid"
+                                poster={video.thumbnail || ''}
+                              >
+                                <source src={video.src} type="video/mp4" />
+                                Votre navigateur ne supporte pas la lecture de vidéos.
+                              </video>
+                            )}
+                          </div>
+                          <div className="video-title">
+                            <h5>{video.title}</h5>
                           </div>
                         </div>
-                        <h4 className="video-title">{video.title}</h4>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="video-placeholder">
@@ -470,16 +529,30 @@ function CategoryDetail() {
                   src={selectedMedia.src} 
                   alt={selectedMedia.alt} 
                   className="media-modal-image" 
+                  loading="lazy"
                 />
               ) : (
                 <div className="media-modal-video">
-                  <iframe 
-                    src={`https://www.youtube.com/embed/${selectedMedia.src}`} 
-                    title={selectedMedia.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
+                  {selectedMedia.src.includes('youtube') ? (
+                    <iframe 
+                      src={`https://www.youtube-nocookie.com/embed/${selectedMedia.src.split('v=')[1]?.split('&')[0] || selectedMedia.src.split('/').pop()}`}
+                      title={selectedMedia.title}
+                      frameBorder="0"
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <video 
+                      src={selectedMedia.src} 
+                      controls 
+                      autoPlay
+                      className="media-modal-video-player"
+                    >
+                      <source src={selectedMedia.src} type="video/mp4" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                  )}
                 </div>
               )}
             </div>

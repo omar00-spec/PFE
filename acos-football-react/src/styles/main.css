@@ -29,6 +29,8 @@ html {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
+  position: relative;
+  padding-bottom: 0; /* Supprimer le padding en bas pour le footer */
 }
 
 .main-content {
@@ -90,7 +92,9 @@ main {
   padding: 2rem 0 1rem 0;
   position: relative;
   flex-shrink: 0;
-  border-top: 3px solid #F7A600;
+  border-top: 3px solid #0cc1e0;
+  z-index: 20; /* Assurer que le footer est au-dessus des autres éléments */
+  clear: both; /* Empêcher les éléments flottants de déborder */
 }
 
 footer .social-links {
@@ -110,12 +114,12 @@ footer .social-links a {
 }
 
 footer .social-links a:hover {
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   transform: translateY(-3px);
 }
 
 /* Correction pour les styles Bootstrap */
 .navbar-nav .nav-link.active, 
 .navbar-nav .nav-link:hover {
-  color: #f7a600 !important;
+  color: #0cc1e0 !important;
 } 

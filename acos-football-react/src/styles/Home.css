@@ -129,7 +129,7 @@
   position: absolute;
   right: 20px;
   bottom: 20px;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   color: #fff;
   padding: 15px;
   border-radius: 8px;
@@ -169,7 +169,7 @@
 
 .feature-box svg {
   font-size: 1.5rem;
-  color: #f7a600;
+  color: #0cc1e0;
   margin-bottom: 15px;
 }
 
@@ -194,7 +194,7 @@
 }
 
 .category-card-header {
-  background: linear-gradient(135deg, #f7a600 0%, #f57c00 100%);
+  background: linear-gradient(135deg, #0cc1e0 0%, #0cc1e0 100%);
   color: #fff;
   padding: 15px 20px;
   position: relative;
@@ -314,7 +314,7 @@
 .btn-outline-primary.btn-sm {
   display: inline-block;
   color: white !important;
-  background-color: #f7a600 !important;
+  background-color: #0cc1e0 !important;
   font-weight: 600;
   text-decoration: none;
   padding: 8px 15px;
@@ -329,7 +329,7 @@
 
 .news-card .btn-outline-primary:hover,
 .btn-outline-primary.btn-sm:hover {
-  background-color: #e09600 !important;
+  background-color: #0cc1e0 !important;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   color: white !important;

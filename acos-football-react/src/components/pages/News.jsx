@@ -40,34 +40,36 @@ const News = () => {
         const newsData = await getNewsOnly();
         console.log("Actualités récupérées:", newsData);
         
-        // Formater les actualités
-        setBlogPosts(newsData.map(news => ({
+        // Transformer les données pour l'affichage
+        const formattedNews = newsData.map(news => ({
           id: news.id,
           title: news.title,
           date: formatDate(news.date),
-          excerpt: news.content.length > 150 ? news.content.substring(0, 150) + '...' : news.content,
           content: news.content,
-          image: news.image || '/images/news-default.jpg',
-          category: 'News'
-        })));
+          excerpt: news.content ? news.content.substring(0, 100) + '...' : 'Cliquez pour voir les détails',
+          category: news.category || 'Actualité',
+          image: news.image || '/images/IMG-20250601-WA0020.jpg',
+        }));
+        
+        // Assigner les actualités formatées à l'état blogPosts
+        setBlogPosts(formattedNews);
         
         // Récupérer les événements (type=event)
         const eventsData = await getEventsOnly();
         console.log("Événements récupérés:", eventsData);
         
-        // Formater les événements
-        setEvents(eventsData.map(event => {
-          return {
+        // Transformer les données pour l'affichage
+        const formattedEvents = eventsData.map(event => ({
             id: event.id,
             title: event.title,
             date: formatDate(event.date),
-            // Utiliser le champ dédié s'il existe, sinon valeur par défaut
-            time: event.event_time || 'Horaire à confirmer',
-            location: event.location || 'Lieu à confirmer',
-            description: event.content,
-            image: event.image
-          };
+            content: event.content,
+            category: 'Événement',
+            image: event.image || '/images/IMG-20250601-WA0015.jpg'
         }));
+        
+        // Assigner les événements formatés à l'état events
+        setEvents(formattedEvents);
         
         // Récupérer les matchs à venir (sans limite)
         const upcomingMatchesData = await getUpcomingMatches(100); // Augmenter la limite pour récupérer tous les matchs
@@ -176,7 +178,13 @@ const News = () => {
                 <div key={post.id} className="col-md-6 col-lg-4 mb-4">
                   <div className="blog-card">
                     <div className="blog-card-img">
-                      <img src={post.image} alt={post.title} className="img-fluid" />
+                      {/* Utiliser l'image URL fournie par l'API ou l'image par défaut */}
+                      <img 
+                        src={post.image} 
+                        alt={post.title} 
+                        className="img-fluid" 
+                        onError={handleImageError}
+                      />
                       <span className="blog-category">{post.category}</span>
                     </div>
                     <div className="blog-card-body">
@@ -248,76 +256,61 @@ const News = () => {
       case 'matches':
         return (
           <div className="matches-container">
-            <div className="matches-section mb-5">
-              <h3 className="matches-section-title">
-                <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
-                Matchs à venir
-              </h3>
-              <div className="row">
-                {upcomingMatches.length > 0 ? (
-                  upcomingMatches.map(match => (
-                    <div key={match.id} className="col-md-6 mb-4">
-                      <div className="match-card upcoming">
-                        <div className="match-date">{match.date}</div>
-                        <div className="match-teams">
-                          <div className="team home">{match.homeTeam}</div>
-                          <div className="match-vs">VS</div>
-                          <div className="team away">{match.awayTeam}</div>
-                        </div>
-                        <div className="match-info">
-                          <div className="match-time">
-                            <FontAwesomeIcon icon={faCalendarAlt} className="me-2" />
-                            {match.time} {/* Afficher l'heure du match */}
-                          </div>
-                          <div className="match-location">
-                            <i className="fas fa-map-marker-alt me-2"></i>
-                            {match.location}
-                          </div>
-                        </div>
+            <h3 className="mb-4">Matchs à venir</h3>
+            {upcomingMatches.length > 0 ? (
+              <div className="upcoming-matches">
+                {upcomingMatches.map(match => (
+                  <div key={match.id} className="match-card mb-3">
+                    <div className="match-header">
+                      <span className="match-date">{match.date}</span>
+                      <span className="match-time">{match.time}</span>
+                      {match.location && <span className="match-location">{match.location}</span>}
+                    </div>
+                    <div className="match-teams">
+                      <div className="team home-team">
+                        <span className="team-name">{match.homeTeam}</span>
+                      </div>
+                      <div className="match-vs">VS</div>
+                      <div className="team away-team">
+                        <span className="team-name">{match.awayTeam}</span>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="col-12 text-center">
-                    <p>Aucun match à venir pour le moment.</p>
                   </div>
-                )}
+                ))}
               </div>
-            </div>
+            ) : (
+              <p className="text-center mb-5">Aucun match à venir pour le moment.</p>
+            )}
             
-            <div className="matches-section">
-              <h3 className="matches-section-title">
-                <FontAwesomeIcon icon={faTrophy} className="me-2" />
-                Résultats récents
-              </h3>
-              <div className="row">
-                {results.length > 0 ? (
-                  results.map(result => (
-                    <div key={result.id} className="col-md-6 mb-4">
-                      <div className="match-card result">
-                        <div className="match-date">{result.date}</div>
-                        <div className="match-teams">
-                          <div className="team home">{result.homeTeam}</div>
-                          <div className="match-score">
-                            <span className="home-score">{result.homeScore}</span>
-                            <span className="score-separator">-</span>
-                            <span className="away-score">{result.awayScore}</span>
-                          </div>
-                          <div className="team away">{result.awayTeam}</div>
-                        </div>
-                        <div className="match-status">
-                          {result.result ? result.result.split(' ')[0] : 'Terminé'}
-                        </div>
+            <h3 className="my-4">Résultats récents</h3>
+            {results.length > 0 ? (
+              <div className="match-results">
+                {results.map(result => (
+                  <div key={result.id} className="result-card mb-3">
+                    <div className="result-header">
+                      <span className="result-date">{result.date}</span>
+                      <span className="result-status">Terminé</span>
+                    </div>
+                    <div className="result-teams">
+                      <div className="team home-team">
+                        <span className="team-name">{result.homeTeam}</span>
+                        <span className="team-score">{result.homeScore}</span>
+                      </div>
+                      <div className="result-separator">-</div>
+                      <div className="team away-team">
+                        <span className="team-score">{result.awayScore}</span>
+                        <span className="team-name">{result.awayTeam}</span>
                       </div>
                     </div>
-                  ))
-                ) : (
-                  <div className="col-12 text-center">
-                    <p>Aucun résultat disponible pour le moment.</p>
+                    <div className="result-footer">
+                      <span className="result-text">{result.result}</span>
+                    </div>
                   </div>
-                )}
+                ))}
               </div>
-            </div>
+            ) : (
+              <p className="text-center">Aucun résultat disponible pour le moment.</p>
+            )}
           </div>
         );
       default:
@@ -325,13 +318,11 @@ const News = () => {
     }
   };
 
-  // Fonction pour fermer la vue détaillée
   const closeDetailView = () => {
     setShowDetailView(false);
     setSelectedPost(null);
   };
 
-  // Composant pour la vue détaillée d'une actualité
   const NewsDetailView = ({ post, onClose }) => {
     if (!post) return null;
     
@@ -361,7 +352,12 @@ const News = () => {
           <div className="news-detail-content">
             <div className="news-detail-header">
               <div className="news-detail-image-container">
-                <img src={post.image} alt={post.title} className="news-detail-image" />
+                <img 
+                  src={post.image} 
+                  alt={post.title} 
+                  className="news-detail-image" 
+                  onError={handleDetailImageError}
+                />
               </div>
               <div className="news-detail-meta">
                 <span className="news-detail-category">{post.category}</span>
@@ -386,22 +382,31 @@ const News = () => {
     );
   };
 
+  // Gérer les erreurs de chargement d'image
+  const handleImageError = (e) => {
+    e.target.src = '/images/IMG-20250601-WA0020.jpg';
+  };
+
+  // Gérer les erreurs de chargement d'image pour les actualités détaillées
+  const handleDetailImageError = (e) => {
+    e.target.src = '/images/IMG-20250601-WA0020.jpg';
+  };
+
   return (
     <>
-      {/* Vue détaillée d'une actualité */}
-      {showDetailView && selectedPost && (
-        <NewsDetailView post={selectedPost} onClose={closeDetailView} />
-      )}
-      
       {/* Hero Section */}
-      <div className="news-hero">
+      <div className="news-hero" style={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/IMG-20250601-WA0025.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-10 mx-auto text-center">
               <h1 className="text-white">Actualités</h1>
               <div className="section-divider mx-auto my-4"></div>
               <p className="text-white lead">
-                Suivez toute l'actualité de l'ACOS Football Academy
+                Restez informés des dernières nouvelles et événements de l'ACOS Football Academy
               </p>
             </div>
           </div>
@@ -409,7 +414,7 @@ const News = () => {
       </div>
 
       {/* Actualités Section */}
-      <Section id="actualites" backgroundColor="#f8f9fa">
+      <Section id="news-content" backgroundColor="#f8f9fa">
         <SectionTitle 
           title="Actualités" 
           subtitle="Restez informé des dernières nouvelles de l'académie"
@@ -451,6 +456,11 @@ const News = () => {
           {renderNewsContent()}
         </div>
       </Section>
+
+      {/* Vue détaillée d'une actualité */}
+      {showDetailView && selectedPost && (
+        <NewsDetailView post={selectedPost} onClose={closeDetailView} />
+      )}
     </>
   );
 };

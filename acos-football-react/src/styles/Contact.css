@@ -1,16 +1,17 @@
 /* Hero Section */
 .contact-hero {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/488598765_122149547180532835_2265002342976211272_n.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 120px 0;
-  margin-bottom: 0;
+  padding: 120px 0 80px;
   position: relative;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Contact Info Sidebar */
 .contact-info-sidebar {
-  background-color: #fff;
+  background-color: #0cc1e0;
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   padding: 2rem;
@@ -26,7 +27,7 @@
 .contact-info-sidebar .divider {
   height: 3px;
   width: 60px;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
 }
 
 .contact-info-item {
@@ -37,7 +38,7 @@
 
 .contact-icon {
   font-size: 1.2rem;
-  color: #f7a600;
+  color: #0cc1e0;
   margin-right: 1rem;
   margin-top: 0.25rem;
 }
@@ -71,7 +72,7 @@
 }
 
 .social-link.instagram {
-  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  background: linear-gradient(45deg, #0cc1e0, #0cc1e0, #0cc1e0, #0cc1e0, #0cc1e0);
 }
 
 .social-link:hover {
@@ -106,12 +107,12 @@
 
 .accordion-button:not(.collapsed) {
   color: #fff;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
 }
 
 .accordion-button:focus {
   box-shadow: none;
-  border-color: #f7a600;
+  border-color: #0cc1e0;
 }
 
 .accordion-button::after {

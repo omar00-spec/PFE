@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faArrowRight, faFutbol, faTrophy } from '@fortawesome/free-solid-svg-icons';
 import api from '../../services/axios';
 import '../../styles/Categories.css';
-import CategoryHeader from '../common/CategoryHeader';
 
 function Categories() {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,6 +25,15 @@ function Categories() {
 
     fetchCategories();
   }, []);
+
+  // Fonction pour gérer la navigation vers une catégorie avec confirmation
+  const handleCategoryClick = (e, categoryName) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Utiliser navigate au lieu de window.location
+    navigate(`/categorie/${categoryName.toLowerCase()}`);
+  };
 
   if (loading) {
     return (
@@ -45,11 +54,23 @@ function Categories() {
 
   return (
     <div className="categories-page">
-      <CategoryHeader 
-        title="Nos Catégories"
-        subtitle="Formation d'excellence pour tous les âges"
-        images={['/images/488639552_122149547504532835_4187688738517176191_n.jpg']}
-      />
+      <div className="categories-header" style={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/2774679-travailler-dans-le-football-610x370.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-10 mx-auto text-center">
+              <h1 className="text-white">Nos Catégories</h1>
+              <div className="section-divider mx-auto my-4"></div>
+              <p className="lead text-white">
+                Formation d'excellence pour tous les âges
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="categories-content">
         <div className="categories-grid">
@@ -71,13 +92,13 @@ function Categories() {
                       <span>20-25 joueurs</span>
                     </div>
                   </div>
-                  <Link 
-                    to={`/categorie/${category.name.toLowerCase()}`} 
+                  <button 
                     className="btn-view-details"
+                    onClick={(e) => handleCategoryClick(e, category.name)}
                   >
                     Voir les détails
                     <FontAwesomeIcon icon={faArrowRight} />
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 
 // Import components
 import Navbar from './components/common/Navbar';
@@ -21,16 +21,84 @@ import CheckPayment from './components/pages/CheckPayment';
 import PaymentSuccess from './components/pages/PaymentSuccess';
 import PaymentCancel from './components/pages/PaymentCancel';
 import Login from './components/pages/Login';
-import MemberSpace from './components/pages/MemberSpace';
+import PlayerDashboard from './components/pages/PlayerDashboard';
+import CoachDashboard from './components/pages/CoachDashboard';
+import ParentDashboard from './components/pages/ParentDashboard';
 
-// Import des composants de ru00e9initialisation de mot de passe
+// Import des composants de réinitialisation de mot de passe
 import ForgotPasswordForm from './components/auth/ForgotPasswordForm';
 import ResetPasswordForm from './components/auth/ResetPasswordForm';
 
 // Import Auth Context
 import { AuthProvider } from './contexts/AuthContext';
+import axios from 'axios';
+
+// Composant pour rediriger en fonction du type d'utilisateur
+const UserRedirect = () => {
+  const userType = localStorage.getItem('userType');
+  
+  if (userType === 'player') {
+    return <Navigate to="/player-dashboard" replace />;
+  } else if (userType === 'coach') {
+    return <Navigate to="/coach-dashboard" replace />;
+  } else if (userType === 'parent') {
+    return <Navigate to="/parent-dashboard" replace />;
+  } else {
+    // Par défaut, rediriger vers la page de connexion
+    return <Navigate to="/login" replace />;
+  }
+};
 
 function App() {
+  const location = useLocation();
+
+  // Protection contre les redirections non désirées
+  useEffect(() => {
+    // Fonction pour empêcher les redirections non désirées
+    const handleBeforeUnload = (e) => {
+      // Si nous sommes sur la page d'inscription, empêcher les redirections non désirées
+      if (location.pathname.includes('inscription')) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    // Ajouter l'écouteur d'événement
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    // Nettoyer l'écouteur d'événement
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [location.pathname]);
+
+  // Configurer l'intercepteur global d'Axios pour gérer les erreurs d'authentification
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      response => response,
+      error => {
+        // Ne pas rediriger si l'erreur vient des routes d'authentification (login, etc.)
+        const isAuthRoute = location.pathname.includes('login') || 
+                            location.pathname.includes('mot-de-passe');
+        
+        if (error.response && 
+            (error.response.status === 401 || error.response.status === 403) &&
+            !isAuthRoute) {
+          // On garde le token et les infos utilisateur pour éviter la déconnexion
+          // en cas d'erreur réseau temporaire ou de problème de backend
+          console.log('Erreur d\'authentification interceptée mais maintien de la session');
+        }
+        return Promise.reject(error);
+      }
+    );
+    
+    return () => {
+      // Supprimer l'intercepteur lors du démontage du composant
+      axios.interceptors.response.eject(interceptor);
+    };
+  }, [location]);
+
   return (
     <AuthProvider>
       <SplashScreen>
@@ -55,11 +123,31 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/mot-de-passe-oublie" element={<ForgotPasswordForm />} />
               <Route path="/reset-password" element={<ResetPasswordForm />} />
-              <Route path="/espace-membre" element={
+              
+              {/* Routes spécifiques aux différents types d'utilisateurs */}
+              <Route path="/player-dashboard" element={
                 <ProtectedRoute>
-                  <MemberSpace />
+                  <PlayerDashboard />
                 </ProtectedRoute>
               } />
+              <Route path="/coach-dashboard" element={
+                <ProtectedRoute>
+                  <CoachDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/parent-dashboard" element={
+                <ProtectedRoute>
+                  <ParentDashboard />
+                </ProtectedRoute>
+              } />
+              
+              {/* Routes pour la compatibilité avec les anciens liens */}
+              <Route path="/espace-membre" element={<UserRedirect />} />
+              <Route path="/espace-coach" element={<Navigate to="/coach-dashboard" replace />} />
+              <Route path="/espace-parent" element={<Navigate to="/parent-dashboard" replace />} />
+              
+              {/* Route par défaut pour les utilisateurs connectés */}
+              <Route path="/dashboard" element={<UserRedirect />} />
             </Routes>
           </main>
           <Footer />

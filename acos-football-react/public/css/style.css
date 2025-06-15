@@ -1,6 +1,6 @@
 /* General Styles */
 :root {
-    --primary-color: #FFD700;  /* Gold */
+    --primary-color: #0cc1e0;  /* Primary Blue */
     --secondary-color: #000000;  /* Black */
     --accent-color: #FFFFFF;  /* White */
     --gradient-dark: linear-gradient(45deg, #000000, #222222);
@@ -266,7 +266,7 @@ body {
 }
 
 .flag-en {
-    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDYwMCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPg0KPGRlZnM+DQo8Y2xpcFBhdGggaWQ9InQiPg0KPHBhdGggZD0iTTYwMCwzMDAgTDYwMCwwIEwwLDAgTDAsNjAwIEwxMjAwLDYwMCBMMTIwMCwzMDAgeiIvPg0KPC9jbGlwUGF0aD4NCjwvZGVmcz4NCjxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iIzAwMjQ3ZCIvPg0KPGcgY2xpcC1wYXRoPSJ1cmwoI3QpIj4NCjxwYXRoIGQ9Ik0wLDAgTDEyMDAsNjAwIE0xMjAwLDAgTDAsNjAwIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMTIwIi8+DQo8L2c+DQo8cGF0aCBkPSJNNjAwLDAgTDYwMCw2MDAgTTAsIDMwMCBMMTIwMCwzMDAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyMDAiLz4NCjxwYXRoIGQ9Ik02MDAsIDAgTDYwMCw2MDAgTTAsIDMwMCBMMTIwMCwzMDAiIHN0cm9rZT0iI2NmMTQyYiIgc3Ryb2tlLXdpZHRoPSIxMjAiLz4NCjxnIGNsaXAtcGF0aD0idXJsKCN0KSI+DQo8cGF0aCBkPSJNMCwwIEwxMjAwLDYwMCBNMTIwMCwwIEwwLDYwMCIgc3Ryb2tlPSIjY2YxNDJiIiBzdHJva2Utd2lkdGg9IjgwIi8+DQo8L2c+DQo8L3N2Zz4=');
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDYwMCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPg0KPGRlZnM+DQo8Y2xpcFBhdGggaWQ9InQiPg0KPHBhdGggZD0iTTYwMCwzMDAgTDYwMCwwIEwwLDAgTDAsNjAwIEwxMjAwLDYwMCBMMTIwMCwzMDAgeiIvPg0KPC9jbGlwUGF0aD4NCjwvZGVmcz4NCjxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iIzAwMjQ3ZCIvPg0KPGcgY2xpcC1wYXRoPSJ1cmwoI3QpIj4NCjxwYXRoIGQ9Ik0wLDAgTDEyMDAsNjAwIE0xMjAwLDAgTDAsNjAwIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMTIwIi8+DQo8L2c+DQo8cGF0aCBkPSJNNjAwLDAgTDYwMCw2MDAgTTAsIDMwMCBMMTIwMCwzMDAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIyMDAiLz4NCjxwYXRoIGQ9Ik02MDAsIDAgTDYwMCw2MDAgTTAsIDMwMCBMMTIwMCwzMDAiIHN0cm9rZT0iI2NmMTQyYiIgc3Ryb2tlLXdpZHRoPSIxMjAiLz4NCjxnIGNsaXAtcGF0aD0idXJsKCN0KSI+DQo8cGF0aCBkPSJNMCAwaDkwMHY2MDBIMHoiLz48cGF0aCBkPSJNMCAwaDMwMHY2MDBIMHoiLz48L3N2Zz4=');
 }
 
 /* Cards */
@@ -404,7 +404,7 @@ footer h5 {
     height: 40px;
     line-height: 40px;
     text-align: center;
-    background: rgba(255, 215, 0, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 50%;
     margin-right: 10px;
     transition: all 0.3s ease;
@@ -437,12 +437,12 @@ footer h5 {
 
 /* Ajustement du bouton toggle pour la navbar sur mobile */
 .navbar-toggler {
-    border-color: rgba(255, 215, 0, 0.5);
+    border-color: rgba(0, 0, 0, 0.5);
     padding: 5px 10px;
 }
 
 .navbar-toggler-icon {
-    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(255, 215, 0, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(0, 0, 0, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 /* Styles pour le menu déroulant */

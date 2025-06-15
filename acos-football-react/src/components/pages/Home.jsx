@@ -28,10 +28,10 @@ function Home() {
 
   // Images du carrousel
   const carouselImages = [
-    '/images/488404680_122149546250532835_3416029371251276575_n.jpg',
-    '/images/488291644_122149546832532835_1462830048450472584_n.jpg',
-    '/images/488639552_122149547504532835_4187688738517176191_n.jpg',
-    '/images/488646908_122149546508532835_8677967410864736082_n.jpg',
+    '/images/IMG-20250601-WA0025.jpg',
+    '/images/IMG-20250601-WA0020.jpg',
+    '/images/IMG-20250601-WA0015.jpg',
+    '/images/IMG-20250601-WA0007.jpg',
   ];
 
   // Contenu des slides
@@ -197,7 +197,12 @@ function Home() {
           <div className="news-detail-content">
             <div className="news-detail-header">
               <div className="news-detail-image-container">
-                <img src={post.image} alt={post.title} className="news-detail-image" />
+                <img 
+                  src={post.image} 
+                  alt={post.title} 
+                  className="news-detail-image"
+                  onError={handleDetailImageError}
+                />
               </div>
               <div className="news-detail-meta">
                 <span className="news-detail-category">{post.category}</span>
@@ -220,6 +225,16 @@ function Home() {
         </div>
       </div>
     );
+  };
+
+  // Gérer les erreurs de chargement d'image
+  const handleImageError = (e) => {
+    e.target.src = "/images/IMG-20250601-WA0020.jpg";
+  };
+
+  // Gérer les erreurs de chargement d'image pour les actualités détaillées
+  const handleDetailImageError = (e) => {
+    e.target.src = "/images/IMG-20250601-WA0020.jpg";
   };
 
   return (
@@ -323,7 +338,7 @@ function Home() {
           <div className="row align-items-center">
             <div className="col-lg-6 mb-4 mb-lg-0">
               <div className="presentation-image">
-                <img src="/images/488643870_122149547516532835_5027201394524829662_n.jpg" alt="ACOS Football Academy" className="img-fluid rounded shadow" />
+                <img src="/images/IMG-20250601-WA0006.jpg" alt="ACOS Football Academy" className="img-fluid rounded shadow" />
                 <div className="presentation-experience">
                   <span className="number">5</span>
                   <span className="text">Années d'Excellence</span>
@@ -559,9 +574,10 @@ function Home() {
                 <div key={news.id} className="col-md-6 col-lg-3 mb-4">
                   <div className="news-card">
                     <img 
-                      src={news.image || "/images/default-news.jpg"} 
+                      src={news.image} 
                       alt={news.title} 
                       className="img-fluid rounded shadow"
+                      onError={handleImageError}
                     />
                     <div className="news-card-body">
                       <h3>{news.title}</h3>
@@ -573,7 +589,7 @@ function Home() {
                             title: news.title,
                             date: formatDate(news.date),
                             content: news.content,
-                            image: news.image || '/images/news-default.jpg',
+                            image: news.image,
                             category: 'News'
                           });
                           setShowDetailView(true);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFile, faCheck, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import RegistrationForm from '../common/RegistrationForm';
@@ -10,7 +10,11 @@ const Registration = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className="registration-hero">
+      <div className="registration-hero" style={{ 
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/IMG-20250601-WA0007.jpg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }}>
         <div className="container">
           <div className="row">
             <div className="col-lg-10 mx-auto text-center">

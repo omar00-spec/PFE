@@ -2,12 +2,13 @@
 
 /* Hero Section */
 .news-hero {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/488464394_122149547216532835_8145285204593842495_n.jpg');
-  background-size: cover;
-  background-position: center;
-  padding: 120px 0;
-  margin-bottom: 0;
+  padding: 120px 0 80px;
   position: relative;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .news-hero h1 {
@@ -19,7 +20,7 @@
 .news-hero .section-divider {
   height: 3px;
   width: 80px;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
 }
 
 /* Tab Navigation */
@@ -37,11 +38,11 @@
 
 .news-tabs .nav-link:hover {
   background-color: #f0f0f0;
-  color: #f7a600;
+  color: #0cc1e0;
 }
 
 .news-tabs .nav-link.active {
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   color: white;
 }
 
@@ -81,7 +82,7 @@
   position: absolute;
   top: 15px;
   right: 15px;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   color: white;
   padding: 5px 10px;
   border-radius: 20px;
@@ -122,7 +123,7 @@
 .blog-read-more {
   display: inline-block;
   color: white;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   font-weight: 600;
   text-decoration: none;
   padding: 8px 15px;
@@ -136,7 +137,7 @@
 }
 
 .blog-read-more:hover {
-  background-color: #e09600;
+  background-color: #0cc1e0;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -161,7 +162,7 @@
   justify-content: center;
   align-items: center;
   padding: 1.5rem;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   color: white;
   min-width: 100px;
 }
@@ -209,7 +210,7 @@
   margin-bottom: 1.5rem;
   color: #343a40;
   padding-bottom: 0.75rem;
-  border-bottom: 2px solid #f7a600;
+  border-bottom: 2px solid #0cc1e0;
 }
 
 .match-card {
@@ -254,7 +255,7 @@
   justify-content: center;
   font-weight: 700;
   font-size: 1.4rem;
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   color: white;
   padding: 5px 15px;
   border-radius: 20px;
@@ -278,7 +279,7 @@
 .match-status {
   margin-top: 1rem;
   padding: 5px 10px;
-  background-color: #f8f9fa;
+  background-color: #0cc1e0;
   border-radius: 20px;
   text-align: center;
   font-weight: 600;
@@ -317,7 +318,7 @@
 }
 
 .match-card.upcoming .match-vs {
-  background-color: #f0f0f0;
+  background-color: #0cc1e0;
   padding: 5px 10px;
   border-radius: 50%;
   font-weight: bold;
@@ -386,7 +387,7 @@
 }
 
 .news-detail-close:hover {
-  color: #f7a600;
+  color: #0cc1e0;
   transform: scale(1.1);
 }
 
@@ -426,7 +427,7 @@
 }
 
 .news-detail-category {
-  background-color: #f7a600;
+  background-color: #0cc1e0;
   color: white;
   padding: 8px 15px;
   border-radius: 20px;
