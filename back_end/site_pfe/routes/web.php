@@ -1,11 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\CoachController;
-use App\Http\Controllers\Admin\ProgramController;
-use App\Http\Controllers\Admin\ScheduleController;
+use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\CoachController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\PlayerAuthController;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\MediaController;
+use App\Http\Controllers\PlayerController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,15 +27,27 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Routes pour la réinitialisation de mot de passe
+Route::get('/reset-password', function (\Illuminate\Http\Request $request) {
+    return view('reset-password', [
+        'token' => $request->token,
+        'email' => $request->email
+    ]);
+});
+
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])->name('password.update');
+
 // Routes d'authentification
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::post('/login', [PlayerAuthController::class, 'login'])->name('login');
+Route::post('/logout', [PlayerAuthController::class, 'logout'])->name('logout');
+Route::get('/profile', [PlayerAuthController::class, 'profile'])->name('profile');
 
 // Routes d'administration (protégées par authentification)
 Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', function() {
+        return view('admin.dashboard');
+    })->name('dashboard');
 
     // Coaches
     Route::get('/coaches', [CoachController::class, 'index'])->name('coaches.index');
@@ -40,13 +57,21 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::put('/coaches/{coach}', [CoachController::class, 'update'])->name('coaches.update');
     Route::delete('/coaches/{coach}', [CoachController::class, 'destroy'])->name('coaches.destroy');
 
-    // Programmes
-    Route::get('/programs', [ProgramController::class, 'index'])->name('programs.index');
-    Route::get('/programs/create', [ProgramController::class, 'create'])->name('programs.create');
-    Route::post('/programs', [ProgramController::class, 'store'])->name('programs.store');
-    Route::get('/programs/{program}/edit', [ProgramController::class, 'edit'])->name('programs.edit');
-    Route::put('/programs/{program}', [ProgramController::class, 'update'])->name('programs.update');
-    Route::delete('/programs/{program}', [ProgramController::class, 'destroy'])->name('programs.destroy');
+    // Actualités
+    Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+    Route::get('/news/create', [NewsController::class, 'create'])->name('news.create');
+    Route::post('/news', [NewsController::class, 'store'])->name('news.store');
+    Route::get('/news/{news}/edit', [NewsController::class, 'edit'])->name('news.edit');
+    Route::put('/news/{news}', [NewsController::class, 'update'])->name('news.update');
+    Route::delete('/news/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
+
+    // Médias
+    Route::get('/media', [MediaController::class, 'index'])->name('media.index');
+    Route::get('/media/create', [MediaController::class, 'create'])->name('media.create');
+    Route::post('/media', [MediaController::class, 'store'])->name('media.store');
+    Route::get('/media/{media}/edit', [MediaController::class, 'edit'])->name('media.edit');
+    Route::put('/media/{media}', [MediaController::class, 'update'])->name('media.update');
+    Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
     // Plannings
     Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules.index');
@@ -55,4 +80,32 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/schedules/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedules.edit');
     Route::put('/schedules/{schedule}', [ScheduleController::class, 'update'])->name('schedules.update');
     Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
+
+    // Joueurs
+    Route::get('/players', [PlayerController::class, 'index'])->name('players.index');
+    Route::get('/players/create', [PlayerController::class, 'create'])->name('players.create');
+    Route::post('/players', [PlayerController::class, 'store'])->name('players.store');
+    Route::get('/players/{player}/edit', [PlayerController::class, 'edit'])->name('players.edit');
+    Route::put('/players/{player}', [PlayerController::class, 'update'])->name('players.update');
+    Route::delete('/players/{player}', [PlayerController::class, 'destroy'])->name('players.destroy');
 });
+
+// Route pour servir les images avec les en-têtes CORS corrects
+Route::get('/storage/{path}', function($path) {
+    $path = 'public/' . $path;
+    
+    if (!Storage::exists($path)) {
+        abort(404);
+    }
+    
+    $file = Storage::get($path);
+    $type = Storage::mimeType($path);
+    
+    $response = response($file, 200)
+        ->header('Content-Type', $type)
+        ->header('Access-Control-Allow-Origin', '*')
+        ->header('Access-Control-Allow-Methods', 'GET, OPTIONS')
+        ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    
+    return $response;
+})->where('path', '.*');

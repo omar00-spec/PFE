@@ -9,7 +9,7 @@ class Player extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['firstname', 'lastname', 'birth_date', 'photo', 'team', 'category_id'];
+    protected $fillable = ['firstname', 'lastname', 'birth_date', 'photo', 'team', 'category_id', 'yellow_cards'];
 
     public function category()
     {
@@ -19,5 +19,10 @@ class Player extends Model
     public function registration()
     {
         return $this->hasOne(Registration::class);
+    }
+    
+    public function performance()
+    {
+        return $this->hasOne(Performance::class);
     }
 }

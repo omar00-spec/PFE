@@ -9,7 +9,7 @@ class News extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'type', 'content', 'location', 'event_time', 'image', 'date'];
+    protected $fillable = ['title', 'type', 'content', 'location', 'event_time', 'image', 'date', 'status'];
 
     /**
      * Vérifie si cette actualité est un événement

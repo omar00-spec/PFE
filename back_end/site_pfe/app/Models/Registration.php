@@ -11,12 +11,15 @@ class Registration extends Model
 
     protected $fillable = [
         'player_id',
+        'player_firstname',
+        'player_lastname',
+        'birth_date',
+        'category_id',
         'parent_name',
         'parent_email',
         'parent_phone',
         'address',
         'city',
-        'postal_code',
         'player_phone',
         'player_email',
         'documents',
@@ -29,8 +32,17 @@ class Registration extends Model
 
     protected $casts = [
         'documents' => 'array',
+        'birth_date' => 'date',
     ];
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Relation avec le joueur
+     */
     public function player()
     {
         return $this->belongsTo(Player::class);

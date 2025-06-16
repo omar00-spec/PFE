@@ -14,7 +14,12 @@ class PaymentController extends Controller
     public function __construct()
     {
         // Initialiser Stripe dans le constructeur
-        \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
+        $stripeKey = env('STRIPE_SECRET_KEY');
+        if ($stripeKey) {
+            \Stripe\Stripe::setApiKey($stripeKey);
+        } else {
+            Log::error('Clé API Stripe non configurée');
+        }
     }
 
     /**
@@ -23,11 +28,34 @@ class PaymentController extends Controller
     public function createBankTransferSession(Request $request)
     {
         try {
+            // Vérifier si l'ID d'inscription est fourni
+            if (!$request->has('registration_id')) {
+                return $this->errorResponse('ID d\'inscription manquant', 400);
+            }
+
+            // Vérifier que la clé Stripe est configurée
+            if (!env('STRIPE_SECRET_KEY')) {
+                return $this->errorResponse('Configuration de paiement incorrecte. Veuillez contacter l\'administrateur.', 500);
+            }
+            
+            // Journalisation pour débogage
+            Log::info('Demande de création de session de paiement', [
+                'registration_id' => $request->registration_id
+            ]);
+
             // Récupérer l'inscription
-            $registration = Registration::with('player')->findOrFail($request->registration_id);
+            $registration = Registration::with('player')->find($request->registration_id);
+            
+            if (!$registration) {
+                Log::error('Inscription non trouvée', ['id' => $request->registration_id]);
+                return $this->errorResponse('Inscription non trouvée', 404);
+            }
 
             // Définir le prix en fonction de la catégorie ou un prix fixe
             $price = 500; // 500 MAD par exemple, à ajuster selon vos besoins
+
+            // Informations du joueur pour la description
+            $playerName = $this->getPlayerName($registration);
 
             // Créer une session de paiement Stripe
             $session = Session::create([
@@ -37,20 +65,26 @@ class PaymentController extends Controller
                         'currency' => 'eur', // EUR est supporté par Stripe
                         'product_data' => [
                             'name' => 'Inscription - ACOS Football Academy',
-                            'description' => 'Inscription pour ' . $registration->player->firstname . ' ' . $registration->player->lastname,
+                            'description' => 'Inscription pour ' . $playerName,
                         ],
                         'unit_amount' => $price * 100, // Stripe utilise les centimes
                     ],
                     'quantity' => 1,
                 ]],
                 'mode' => 'payment',
-                'success_url' => config('app.frontend_url') . '/payment/success?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url' => config('app.frontend_url') . '/payment/cancel',
+                'success_url' => env('APP_FRONTEND_URL', 'http://localhost:3000') . '/payment/success?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => env('APP_FRONTEND_URL', 'http://localhost:3000') . '/payment/cancel',
                 'client_reference_id' => $registration->id,
                 'metadata' => [
                     'registration_id' => $registration->id,
-                    'player_name' => $registration->player->firstname . ' ' . $registration->player->lastname,
+                    'player_name' => $playerName,
                 ],
+            ]);
+
+            // Journalisation de la session créée
+            Log::info('Session de paiement créée', [
+                'session_id' => $session->id,
+                'registration_id' => $registration->id
             ]);
 
             // Mettre à jour le statut de l'inscription
@@ -64,19 +98,20 @@ class PaymentController extends Controller
             ]);
 
         } catch (ApiErrorException $e) {
-            Log::error('Stripe API Error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Erreur lors de la création de la session de paiement',
-                'error' => $e->getMessage(),
-            ], 500);
+            Log::error('Stripe API Error: ' . $e->getMessage(), [
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            return $this->errorResponse('Erreur lors de la création de la session de paiement: ' . $e->getMessage(), 500);
         } catch (\Exception $e) {
-            Log::error('Payment Error: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Une erreur est survenue',
-                'error' => $e->getMessage(),
-            ], 500);
+            Log::error('Payment Error: ' . $e->getMessage(), [
+                'code' => $e->getCode(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return $this->errorResponse('Une erreur est survenue: ' . $e->getMessage(), 500);
         }
     }
 
@@ -141,28 +176,43 @@ class PaymentController extends Controller
                         $registration->payment_status = 'completed';
                         $registration->save();
                         Log::info('Paiement marqué comme complété pour l\'inscription #' . $registration->id);
-                    } else {
-                        Log::warning('Aucune inscription trouvée pour payment_intent: ' . $paymentIntent->id);
                     }
-                    break;
-                    
-                default:
-                    Log::info('Type d\'événement non traité: ' . $event->type);
                     break;
             }
 
             return response()->json(['status' => 'success']);
-
         } catch (\UnexpectedValueException $e) {
-            Log::error('Webhook Error: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
-        } catch (\Stripe\Exception\SignatureVerificationException $e) {
-            Log::error('Webhook Signature Error: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
+            // Signature invalide
+            Log::error('Signature Stripe invalide: ' . $e->getMessage());
+            return $this->errorResponse('Signature invalide', 400);
         } catch (\Exception $e) {
-            Log::error('Webhook Processing Error: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
+            Log::error('Erreur lors du traitement du webhook: ' . $e->getMessage());
+            return $this->errorResponse('Erreur serveur: ' . $e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Récupère le nom du joueur depuis l'objet d'inscription
+     */
+    private function getPlayerName($registration)
+    {
+        if ($registration->player) {
+            return $registration->player->firstname . ' ' . $registration->player->lastname;
+        } elseif ($registration->player_firstname && $registration->player_lastname) {
+            return $registration->player_firstname . ' ' . $registration->player_lastname;
+        }
+        return "Joueur";
+    }
+    
+    /**
+     * Génère une réponse d'erreur standardisée
+     */
+    private function errorResponse($message, $statusCode)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => $message
+        ], $statusCode);
     }
 
     /**

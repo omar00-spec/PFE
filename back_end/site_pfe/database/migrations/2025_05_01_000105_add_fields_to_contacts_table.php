@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contacts', function (Blueprint $table) {
-            //
+            $table->boolean('read')->default(false)->after('message');
+            $table->text('response')->nullable()->after('read');
+            $table->timestamp('responded_at')->nullable()->after('response');
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('contacts', function (Blueprint $table) {
-            //
+            $table->dropColumn(['read', 'response', 'responded_at']);
         });
     }
 };
